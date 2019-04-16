@@ -1,0 +1,9 @@
+[submodule "telepathic-loader"]
+	path = telepathic-loader
+	url = https://github.com/telepathic-elements/telepathic-loader.git
+[submodule "telepathic-elements/telepathic-loader"]
+	path = telepathic-elements/telepathic-loader
+	url = https://github.com/telepathic-elements/telepathic-loader.git
+[submodule "telepathic-elements/qr-code-element"]
+	path = telepathic-elements/qr-code-element
+	url = https://github.com/telepathic-elements/qr-code-element.git

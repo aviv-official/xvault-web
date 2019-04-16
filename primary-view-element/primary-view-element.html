@@ -1,0 +1,11 @@
+<div>
+    <h2>Your Account on ${netInfo.name}</h2>
+    <qr-code-element qrdata="${address}"></qr-code-element>
+    <h4>${address}</h4>
+    <span id="balances">
+        <input id="tokenselection" name="tokenselection" list="tokenchoices" pattern="[A-Z]*" size="4" maxlength="4"/> ${tokenBal}
+    </span>
+    <send-view-element id="sendView"></send-view-element>
+    <buy-view-element></buy-view-element>
+    <datalist id="tokenchoices"></datalist>
+</div>

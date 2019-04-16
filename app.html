@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>XVAULT - MONEY REIMAGINED</title>
+		<meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/images/icons/favicon-16x16.png">
+        <link rel="manifest" href="/manifest.json">
+        <link rel="mask-icon" href="/images/icons/safari-pinned-tab.svg" color="#5bbad5">
+        <link rel="shortcut icon" href="/images/icons/favicon.ico">
+        <meta name="apple-mobile-web-app-title" content="XVault">
+        <meta name="application-name" content="XVault">
+        <meta name="msapplication-TileColor" content="#2d89ef">
+        <meta name="msapplication-config" content="/browserconfig.xml">
+        <meta name="theme-color" content="#ffffff">
+		<link rel="stylesheet" href="assets/css/main.css" />
+        <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+        <script>
+            if('serviceWorker' in navigator){
+                navigator.serviceWorker
+                        .register('./service-worker.js')
+                        .then(function() { console.log('Service Worker Registered'); });
+            }else{
+                alert("Your system prevents service workers, this will degrade your experience");
+            }
+        </script>
+    </head>
+    <body  class="is-preload">
+        <div id="wrapper">
+            <header id="header">
+                <div class="logo">
+                    <img src="images/logo.svg">
+                </div>
+                <div class="content">
+                        <div class="inner" id="heading">
+                            <h1>XVAULT</h1>
+                            <p>MONEY REIMAGINED</p>
+                        </div>
+                </div>
+                <nav>
+                    <ul id="main-menu">
+                        <li><a href="#login" id="connect-btn">Connect!</a></li>
+                    </ul>
+                </nav>
+            </header>
+            <div id="main">
+                <article id="primary-act">
+                    <h2 class="major">Primary Account</h2>
+                    <primary-view-element></primary-view-element>
+                </article>
+                <article id="exchange-act">
+                    <h2 class="major">Exchange Account</h2>
+                    <!--<exchange-view-element></exchange-view-element>-->
+                </article>
+                <article id="mm-act">
+                    <h2 class="major">Money Market</h2>
+                    <!--<mm-view-element></mm-view-element>-->
+                </article>
+                <article id="margin-act">
+                    <h2 class="major">Margin Account</h2>
+                    <!--<ma-view-element></ma-view-element>-->
+                </article>
+                <article id="rewards-act">
+                    <h2 class="major">Rewards</h2>
+                    <!--<rewards-view-element></rewards-view-element>-->
+                </article>
+                <article id="settings-view">
+                    <h2 class="major">Settings</h2>
+                    <!--<settings-view-element></settings-view-element>-->
+                </article>
+            </div>
+            <footer id="footer">
+                    <p class="copyright">&copy; 2019 XVault Enterprises, All Rights Reserved</p>
+            </footer>
+        </div>
+        <div id="bg"></div>
+        
+
+        <script>
+            let btn = document.getElementById("connect-btn");
+            btn.addEventListener('click',async ()=>{
+                if(!ethereum){
+                    window.alert("Please enable metamask then press refresh!");
+                }else{
+                    console.log(ethereum);
+                    let connection = await app.connect();
+                    
+                    if(connection){
+                        btn.innerHTML = "Connected!";
+                        let menu = document.getElementById("main-menu");
+                        let heading = document.getElementById("heading");
+                        heading.innerHTML = `<h1>XVAULT</h1><p>Choose Account</p>`;
+                        menu.innerHTML =    `<li><a href="#primary-act">Primary</a></li>
+                                            <!--<li><a href="#exchange-act">Exchange</a></li>
+                                            <li><a href="#mm-act">Money Market</a></li>
+                                            <li><a href="#margin-act">Margin</a></li>
+                                            <li><a href="#rewards-act">Rewards</a></li>
+                                            <li><a href="#settings-view">Settings</a></li>-->
+                                            `;
+                    }else{
+                        window.alert("Connection refused!");
+                    }
+                }
+            });
+        </script>
+        <script src="assets/js/jquery.min.js"></script>
+        <script src="assets/js/browser.min.js"></script>
+        <script src="assets/js/breakpoints.min.js"></script>
+        <script src="assets/js/util.js"></script>
+        <script src="assets/js/main.js"></script>
+        <script src="assets/js/web3-1.0.0-beta.37.min.js"></script>
+        <script src="assets/js/math.min.js"></script>
+        <script src="assets/js/qr-scanner.min.js" type="module"></script>
+        <script src="assets/js/app.js" type="module"></script>
+        <script src="telepathic-elements/telepathic-loader/telepathic-loader.js" type="module"></script>
+    </body>
+</html>
