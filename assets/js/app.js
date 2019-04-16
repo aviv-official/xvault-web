@@ -3,12 +3,12 @@
 export default class AppController{
     constructor(){
         setTimeout(async()=>{
-            let data = await (await fetch("/assets/js/web3-1.0.0-beta.37.min.js")).text();
+            let data = await (await fetch("/xvault-web/assets/js/web3-1.0.0-beta.37.min.js")).text();
             await eval(data);
-            this.xtokenAddrs = await JSON.parse(await (await fetch("/assets/json/xtoken/xtoken.deployment.json")).text());
+            this.xtokenAddrs = await JSON.parse(await (await fetch("/xvault-web/assets/json/xtoken/xtoken.deployment.json")).text());
             console.debug("this.xtokens: ",this.xtokens);
-            this.xtokenABI = await JSON.parse(await (await fetch("/assets/json/xtoken/xtoken.abi.json")).text());
-            this.chains = await JSON.parse(await (await fetch("/assets/json/chains.json")).text());
+            this.xtokenABI = await JSON.parse(await (await fetch("/xvault-web/assets/json/xtoken/xtoken.abi.json")).text());
+            this.chains = await JSON.parse(await (await fetch("/xvault-web/assets/json/chains.json")).text());
             console.debug("this.chains: ",this.chains);
         },100);
     }

@@ -1,10 +1,10 @@
 import {TelepathicElement} from "https://telepathic-elements.github.io/telepathic-element/telepathic-element.js";
-import {QrScanner} from "/assets/js/qr-scanner.min.js";
+import {QrScanner} from "/xvault-web/assets/js/qr-scanner.min.js";
 export default class SendViewElement extends TelepathicElement{
     static describe(){return `An element to permit entry of dest and amount.`};
     constructor(fileName,noshadow,delayRender){
         super(fileName,noshadow,delayRender);
-        QrScanner.WORKER_PATH = '/assets/js/qr-scanner-worker.min.js';
+        QrScanner.WORKER_PATH = '/xvault-web/assets/js/qr-scanner-worker.min.js';
         this.destAddr = "";
         this.destAmt = "";
         this.isCameraOpen = false;
