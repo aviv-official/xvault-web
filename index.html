@@ -7,12 +7,12 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-		<link rel="manifest" href="/manifest.json">
+		<link rel="manifest" href="manifest.json">
 		<script>
 			if('serviceWorker' in navigator){
 				navigator.serviceWorker
-						.register('./service-worker.js')
-						.then(function() { console.log('Service Worker Registered'); });
+						.register('service-worker.js')
+						.then(()=>{ console.log('Service Worker Registered'); });
 			}else{
 				alert("Your system prevents service workers, this will degrade your experience");
 			}
@@ -41,7 +41,7 @@
 								<li><a href="#products">Products</a></li>
 								<li><a href="#services">Services</a></li>
 								<li><a href="#rewards">Rewards</a></li>
-								<li><a href="/xvault-web/app.html">Connect</a></li>
+								<li><a href="app.html">Connect</a></li>
 								<!--
 								<li><a href="#about">About</a></li>
 								<li><a href="#contact">Contact Us</a></li>-->

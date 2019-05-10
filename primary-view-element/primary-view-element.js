@@ -54,7 +54,7 @@ export default class PrimaryViewElement extends TelepathicElement{
         }
     }
 
-    async update(name,value){
+    async update(name,value){ 
         this.tokenchoices = this.$.querySelector("#tokenchoices");
         this[name] = value;
         //This should cancel existing timer and reset timers and listeners

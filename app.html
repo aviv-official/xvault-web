@@ -4,16 +4,16 @@
 		<title>XVAULT - MONEY REIMAGINED</title>
 		<meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/images/icons/favicon-16x16.png">
-        <link rel="manifest" href="/manifest.json">
-        <link rel="mask-icon" href="/images/icons/safari-pinned-tab.svg" color="#5bbad5">
-        <link rel="shortcut icon" href="/images/icons/favicon.ico">
+        <link rel="apple-touch-icon" sizes="180x180" href="images/icons/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+        <link rel="manifest" href="manifest.json">
+        <link rel="mask-icon" href="images/icons/safari-pinned-tab.svg" color="#5bbad5">
+        <link rel="shortcut icon" href="images/icons/favicon.ico">
         <meta name="apple-mobile-web-app-title" content="XVault">
         <meta name="application-name" content="XVault">
         <meta name="msapplication-TileColor" content="#2d89ef">
-        <meta name="msapplication-config" content="/browserconfig.xml">
+        <meta name="msapplication-config" content="browserconfig.xml">
         <meta name="theme-color" content="#ffffff">
 		<link rel="stylesheet" href="assets/css/main.css" />
         <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
@@ -77,31 +77,25 @@
         </div>
         <div id="bg"></div>
         
-
         <script>
             let btn = document.getElementById("connect-btn");
             btn.addEventListener('click',async ()=>{
-                if(!ethereum){
-                    window.alert("Please enable metamask then press refresh!");
+                
+                let connection = await app.connect();
+                if(connection){
+                    btn.innerHTML = "Connected!";
+                    let menu = document.getElementById("main-menu");
+                    let heading = document.getElementById("heading");
+                    heading.innerHTML = `<h1>XVAULT</h1><p>Choose Account</p>`;
+                    menu.innerHTML =    `<li><a href="#primary-act">Primary</a></li>
+                                        <!--<li><a href="#exchange-act">Exchange</a></li>
+                                        <li><a href="#mm-act">Money Market</a></li>
+                                        <li><a href="#margin-act">Margin</a></li>
+                                        <li><a href="#rewards-act">Rewards</a></li>
+                                        <li><a href="#settings-view">Settings</a></li>-->
+                                        `;
                 }else{
-                    console.log(ethereum);
-                    let connection = await app.connect();
-                    
-                    if(connection){
-                        btn.innerHTML = "Connected!";
-                        let menu = document.getElementById("main-menu");
-                        let heading = document.getElementById("heading");
-                        heading.innerHTML = `<h1>XVAULT</h1><p>Choose Account</p>`;
-                        menu.innerHTML =    `<li><a href="#primary-act">Primary</a></li>
-                                            <!--<li><a href="#exchange-act">Exchange</a></li>
-                                            <li><a href="#mm-act">Money Market</a></li>
-                                            <li><a href="#margin-act">Margin</a></li>
-                                            <li><a href="#rewards-act">Rewards</a></li>
-                                            <li><a href="#settings-view">Settings</a></li>-->
-                                            `;
-                    }else{
-                        window.alert("Connection refused!");
-                    }
+                    window.alert("Connection refused!");
                 }
             });
         </script>
@@ -110,8 +104,12 @@
         <script src="assets/js/breakpoints.min.js"></script>
         <script src="assets/js/util.js"></script>
         <script src="assets/js/main.js"></script>
+        <script src="assets/js/bip39.min.js"></script>
         <script src="assets/js/web3-1.0.0-beta.37.min.js"></script>
         <script src="assets/js/math.min.js"></script>
+        <script src="assets/js/nacl-fast.min.js"></script>
+        <script src="assets/js/nacl-util.min.js"></script>
+        <script src="assets/js/encryption.js" type="module"></script>
         <script src="assets/js/qr-scanner.min.js" type="module"></script>
         <script src="assets/js/app.js" type="module"></script>
         <script src="telepathic-elements/telepathic-loader/telepathic-loader.js" type="module"></script>
