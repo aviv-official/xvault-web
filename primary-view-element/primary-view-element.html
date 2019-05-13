@@ -3,9 +3,13 @@
     <qr-code-element qrdata="${address}"></qr-code-element>
     <h4>${address}</h4>
     <span id="balances">
-        <input id="tokenselection" name="tokenselection" list="tokenchoices" pattern="[A-Z]*" size="4" maxlength="4"/> ${tokenBal}
+        <!--
+        <input id="tokenselection" name="tokenselection" list="tokenchoices" pattern="[A-Z]*" size="4" maxlength="4"/> 
+        -->
+        <select id="token-selector"></select>
+        ${tokenBal}
     </span>
     <send-view-element id="sendView"></send-view-element>
     <buy-view-element></buy-view-element>
-    <datalist id="tokenchoices"></datalist>
+    <!--<datalist id="tokenchoices"></datalist>-->
 </div>

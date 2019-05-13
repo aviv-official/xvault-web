@@ -10,9 +10,8 @@ export default class PrimaryViewElement extends TelepathicElement{
             name : "connecting..."
         };
         this.tokenBal = (0).toFixed(18);
-        this.currentSymbol = "";
-        this.tokenchoices = this.$.querySelector("#tokenchoices");
-        this.tokenselector = this.$.querySelector("#tokenselection");
+        this.current_symbol = "";
+        this.token_selector = this.$.querySelector("#token-selector");
     }
 
     static get observedAttributes() {
@@ -27,7 +26,7 @@ export default class PrimaryViewElement extends TelepathicElement{
     }
 
     async sendCB(dest,amount){
-        app.sendCB(this.currentSymbol,dest,amount);
+        app.sendCB(this.current_symbol,dest,amount);
     }
     async onReady(){
         console.warn(`${this.constructor.name} entering onReady!`);  
@@ -35,27 +34,26 @@ export default class PrimaryViewElement extends TelepathicElement{
     }
     
     async reset(){
-        this.tokenchoices = this.$.querySelector("#tokenchoices");
-        this.tokenselector = this.$.querySelector("#tokenselection");
-        console.debug("tokenselector: ",this.tokenselector);
-        this.tokenselector.addEventListener('change', ()=>{this.onTokenChange()});
+        this.token_selector = this.$.querySelector("#token-selector");
+        console.debug("token_selector: ",this.token_selector);
+        this.token_selector.addEventListener('change', ()=>{this.onTokenChange()});
     }
 
     async onTokenChange(){
         try{
-            this.tokenchoices = this.$.querySelector("#tokenchoices");
-            this.tokenselector = this.$.querySelector("#tokenselection");
-            console.debug("tokenselector: ",this.tokenselector.value);
-            this.currentToken = window.app.XTokens[this.tokenselector.value];
-            this.currentSymbol = this.tokenselector.value;
-            this.tokenBal = await this.currentToken.balanceDisplay(window.app.currentAddress);
+            console.debug("token_selector: ",this.token_selector.value);
+            localStorage["lastToken"] = this.token_selector.value;
+            this.current_token = window.app.XTokens[this.token_selector.value];
+            this.current_symbol = this.token_selector.value;
+            this.tokenBal = await this.current_token.balanceDisplay(window.app.currentAddress);
         }catch(err){
             console.debug(err);
         }
     }
 
     async update(name,value){ 
-        this.tokenchoices = this.$.querySelector("#tokenchoices");
+        this.token_selector= this.$.querySelector("#token-selector");
+        console.debug("token_selector: ",this.token_selector);
         this[name] = value;
         //This should cancel existing timer and reset timers and listeners
         this.web3 = window.app.Web3
@@ -64,25 +62,30 @@ export default class PrimaryViewElement extends TelepathicElement{
             let netInfo = window.app.netInfo;
             Object.assign(this.netInfo,netInfo);
             console.debug("this.netInfo: ",this.netInfo);
-        }
+        } 
+        let last_token = localStorage["lastToken"];
         let xtokens = window.app.XTokens;
         let keys = Object.getOwnPropertyNames(xtokens);
-        if(this.tokenchoices){
-            this.tokenchoices.innerHTML = "";
+        if(this.token_selector){
+            this.token_selector.innerHTML = "";
             for(let key of keys){
                 let opt = document.createElement("option");
-                opt.name = key;
                 opt.value = key;
-                this.tokenchoices.appendChild(opt);
+                opt.innerText = key;
+                if(key == last_token){
+                    opt.setAttribute("selected","true");
+                }
+                this.token_selector.appendChild(opt);
             }
         }else{
-            console.debug("tokenchoices is missing????");
+            console.debug("token_selector is missing????");
         }
 
         
         if(this.timer){
             clearInterval(this.timer);
         }
+        this.onTokenChange();
         this.timer = setInterval(()=>{this.checkStats()},30000);
         this.checkStats();
         window.sendView.setParent(this);
@@ -93,7 +96,6 @@ export default class PrimaryViewElement extends TelepathicElement{
             console.debug("Checking stats!");
             if(window.app.currentAddress){
                 let balTable = document.createElement("table");
-                
             }
         }catch(err){
             console.debug(err);
