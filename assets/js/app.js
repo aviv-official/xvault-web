@@ -173,7 +173,9 @@ export default class AppController{
                     let bal = await this.methods.balanceOf(account).call();
                     return await this.rawToDisplay(bal);
                 }
-                
+                ctr.decimals = async function(){
+                    return await this.methods.decimals().call();
+                }
                 this.xtokens[keys[0]] = ctr;
                 console.debug("loadTokens: "+keys[0]+" : ",this.xtokens[keys[0]].options.address);
             }catch(err){

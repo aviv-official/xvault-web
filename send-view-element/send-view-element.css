@@ -1,1 +1,6 @@
 @import "/assets/fonts/fontawesome-webfont.svg";
+
+.box{
+    border: 1px;
+    border-color: white;
+}

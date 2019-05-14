@@ -46,6 +46,9 @@ export default class PrimaryViewElement extends TelepathicElement{
             this.current_token = window.app.XTokens[this.token_selector.value];
             this.current_symbol = this.token_selector.value;
             this.tokenBal = await this.current_token.balanceDisplay(window.app.currentAddress);
+            this.buy_view = this.$.querySelector("buy-view-element");
+            console.debug("buy_view: ",this.buy_view);
+            this.buy_view.setAttribute("symbol",this.current_symbol);
         }catch(err){
             console.debug(err);
         }
