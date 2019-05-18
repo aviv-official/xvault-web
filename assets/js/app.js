@@ -216,15 +216,24 @@ export default class AppController{
     }
 
     async sendCB(symbol, dest, amount){
-        console.debug(`Sending ${amount} ${symbol} to ${dest}`);
-        let ctr = await this.XTokens[symbol];
-        let fin = (await ctr.displayToRaw(amount)).toString();
-        let result = await ctr.methods.transfer(dest,fin).send({
-            from : this.currentAddress
-        });
-        console.debug("result: ",result);
-        window.alert(`Sent ${amount} ${symbol} to ${dest}!`);
-
+        let result;
+        if(window.confirm(`Would you like to send ${amount} ${symbol} to ${dest}?`)){
+            try{
+                let ctr = await this.XTokens[symbol];
+                let fin = (await ctr.displayToRaw(amount)).toString();
+                let wallet = await this.pinPrompt();
+                let params = {
+                    from : wallet[0].address
+                }
+                params.gas = await ctr.methods.transfer(dest,fin).estimateGas(params);
+                console.debug("params: ",params);
+                let result = await ctr.methods.transfer(dest,fin).send(params);
+                console.debug("result: ",result);
+                window.alert(`Successfully sent ${amount} ${symbol} to ${dest}! Transaction Hash is ${result.transactionHash}`);
+            }catch(err){
+                window.alert(err);
+            }
+        }
         return result;
     }
 
