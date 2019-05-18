@@ -227,7 +227,7 @@ export default class AppController{
                 }
                 params.gas = await ctr.methods.transfer(dest,fin).estimateGas(params);
                 console.debug("params: ",params);
-                let result = await ctr.methods.transfer(dest,fin).send(params);
+                result = await ctr.methods.transfer(dest,fin).send(params);
                 console.debug("result: ",result);
                 window.alert(`Successfully sent ${amount} ${symbol} to ${dest}! Transaction Hash is ${result.transactionHash}`);
             }catch(err){
