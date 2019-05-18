@@ -1,0 +1,19 @@
+select, button, summary {
+    background-color: black;
+    box-shadow: 0 5px 0 grey;
+    color: white;
+    padding: 1em 1.5em;
+    position: relative;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+  
+  select, button, summary:hover {
+    background-color: grey;
+    cursor: pointer;
+  }
+  
+  select, button, summary:active {
+    box-shadow: none;
+    top: 5px;
+  }

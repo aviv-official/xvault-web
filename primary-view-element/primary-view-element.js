@@ -97,9 +97,7 @@ export default class PrimaryViewElement extends TelepathicElement{
     async checkStats(){
         try{
             console.debug("Checking stats!");
-            if(window.app.currentAddress){
-                let balTable = document.createElement("table");
-            }
+            this.tokenBal = await this.current_token.balanceDisplay(window.app.currentAddress);
         }catch(err){
             console.debug(err);
         };
