@@ -25,6 +25,7 @@ export default class SettingsViewElement extends TelepathicElement{
             console.debug("lock-btn clicked!");
             this.mnemonic = "";
             event.preventDefault();
+            window.location = "./app.html";
         });
     }
 
