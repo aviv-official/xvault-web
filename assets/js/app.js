@@ -13,6 +13,8 @@ export default class AppController{
             promises.push(this.fetchJSON("xtokenABI","/xvault-web/assets/json/xtoken/xtoken.abi.json"));
             promises.push(this.fetchJSON("chains","/xvault-web/assets/json/chains.json"));
             promises.push(this.fetchJSON("wordList","/xvault-web/assets/json/wordlists/english.json"));
+            promises.push(this.fetchJSON("xchangeABI","/xvault-web/assets/json/xchange/xchange.abi.json"));
+            promises.push(this.fetchJSON("xchangeAddrs","/xvault-web/assets/json/xchange/xchange.deployment.json"));
             await Promise.all(promises);
             console.debug("App done loading .json files!");
         },100);
@@ -98,7 +100,7 @@ export default class AppController{
     }
 
     async decryptWallet(pin){
-        return this.web3.eth.accounts.wallet.load(await this.pbkdf(pin));
+        return await this.web3.eth.accounts.wallet.load(await this.pbkdf(pin));
     }
 
     async pinPrompt(){
@@ -120,6 +122,9 @@ export default class AppController{
         if(localStorage["web3js_wallet"]){
             //Prompt for PIN to ensure decryption
             this.wallet = JSON.parse(localStorage["web3js_wallet"]);
+            if(!localStorage["selectedAddress"]){
+                localStorage["selectedAddress"] = this.wallet[0].address;
+            }
             return await this.postConnect(provider);
         }else{
             let pin = prompt("You must set a PIN to continue, it must be between 10 and 16 digits long");
@@ -149,14 +154,17 @@ export default class AppController{
     async loadTokens(){
         this.xtokens = {};
         let network = localStorage["network_id"];
+        this.xchange = await new this.Web3.eth.Contract(this.xchangeABI,this.xchangeAddrs[network]);
+        this.xchange.addr = this.xchangeAddrs[network];
         let contracts = this.xtokenAddrs[network];
         for(let contract of contracts){
             let keys = Object.getOwnPropertyNames(contract);
             try{
                 let ctr = await new this.Web3.eth.Contract(this.xtokenABI,contract[keys[0]]);
+                ctr.addr = contract[keys[0]];
                 ctr.rawToDisplay = async function(val){
                     let dec = await this.methods.decimals().call();
-                    console.debug(`val: ${val} : decimals ${dec}`);
+                    //console.debug(`val: ${val} : decimals ${dec}`);
                     if(val != 0){
                         return math.multiply(val,math.pow(10,0-dec)).toFixed(dec);
                     }else{
@@ -169,7 +177,7 @@ export default class AppController{
                 }
 
                 ctr.balanceDisplay = async function(account){
-                    console.debug("this: ",this);
+                    //console.debug("this: ",this);
                     let bal = await this.methods.balanceOf(account).call();
                     return await this.rawToDisplay(bal);
                 }
