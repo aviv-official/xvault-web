@@ -46,6 +46,9 @@ export default class BuyViewElement extends TelepathicElement{
                     from : wallet[0].address
                 }
                 params.gas = await this.current_token.methods.mint(wallet[0].address).estimateGas(params);
+                if(params.gas < 60000){
+                    params.gas = 60000;
+                }
                 console.debug("params: ", params);
                 
                 let result = await this.current_token.methods.mint(wallet[0].address).send(params);
