@@ -1,12 +1,14 @@
 <link rel="stylesheet" href="./primary-view-element/primary-view-element.css">
 <div> 
     <h2>Your Account on ${netInfo.name}</h2>
+    
     <span id="balances">
         <select id="token-selector"></select>${tokenBal}
     </span><br>
     <details id="recv-funds">
         <summary>Receive</summary>
         <h4>${address}</h4>
+        <h5 class="tooltip">wei balance: ${weiBalance}<span class="tooltiptext">This is the balance of network tokens, as wei which is the smallest unit of account.  They are used to fund purchases and also to pay transaction fees.</span></h5>
         <qr-code-element qrdata="${address}"></qr-code-element>
     </details>
     <details id="send-funds">

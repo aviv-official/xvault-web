@@ -10,6 +10,7 @@ export default class PrimaryViewElement extends TelepathicElement{
             name : "connecting..."
         };
         this.tokenBal = (0).toFixed(18);
+        this.weiBalance = (0).toFixed(18);
         this.current_symbol = "";
         this.token_selector = this.$.querySelector("#token-selector");
     }
@@ -98,6 +99,7 @@ export default class PrimaryViewElement extends TelepathicElement{
     async checkStats(){
         try{
             console.debug("Checking stats!");
+            this.weiBalance = await window.app.web3.eth.getBalance(this.address);
             this.tokenBal = await this.current_token.balanceDisplay(window.app.currentAddress);
         }catch(err){
             console.debug(err);
