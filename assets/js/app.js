@@ -29,12 +29,15 @@ export default class AppController{
     }
 
     async connect(){
+        /*
         if(window.ethereum){
             console.debug("Metamask or other wallet detected");
             return await this.connectExternal();
         }else{
             return await this.connectInternal();
         }
+        */
+       return await this.connectInternal();
     }
 
     async connectExternal(){
