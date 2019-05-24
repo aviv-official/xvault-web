@@ -13,7 +13,7 @@ summary::-webkit-details-marker {
     display: none
 }
 
-select, button, summary {
+select, summary {
   background-color: black;
   box-shadow: 0 5px 0 grey;
   color: white;
@@ -23,12 +23,12 @@ select, button, summary {
   text-transform: uppercase;
 }
 
-select, button, summary:hover {
+select, summary:hover {
   background-color: grey;
   cursor: pointer;
 }
 
-select, button, summary:active {
+select, summary:active {
   box-shadow: none;
   top: 5px;
 }
@@ -83,4 +83,9 @@ details[open] summary:after {
 /* Show the tooltip text when you mouse over the tooltip container */
 .tooltip:hover .tooltiptext {
   visibility: visible;
+}
+
+button {
+  margin:2;
+  padding: 2;
 }

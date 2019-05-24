@@ -4,6 +4,8 @@ export default class BuyViewElement extends TelepathicElement{
     constructor(fileName,noshadow,delayRender){
         super(fileName,noshadow,delayRender);
         this.qty = "";
+        this.price = (0).toFixed(18);
+        this.weiBalance = (0).toFixed(18);
     }
 
     static get observedAttributes() {
@@ -38,6 +40,8 @@ export default class BuyViewElement extends TelepathicElement{
         if(window.confirm(`Would you like to spend ${eth} ETH to purchase ${this.buy_qty.value} ${this.symbol}?`)){
             try{
                 let wallet = await window.app.pinPrompt();
+                console.debug("ALERT: ",window.alert);
+                window.alert(`Sending ${eth} ETH to purchase ${this.buy_qty.value} ${this.symbol}`);
                 console.debug("wallet is ",wallet);
                 console.debug(`wei: ${wei} needed`);
                 let params = {
@@ -70,6 +74,20 @@ export default class BuyViewElement extends TelepathicElement{
             console.debug("buy now pressed!",evt);
             this.onBuyNow(evt);
         });
+        this.buy_qty.addEventListener("keypress",async (evt)=>{
+            let tokens = await this.current_token.displayToRaw(this.buy_qty.value);
+            this.price = await this.current_token.methods.tokensToNet(""+tokens).call();
+            console.debug(`About to buy ${tokens} ${this.symbol} cost: ${this.price} wei`);
+            //this.price = math.multiply(wei,10**-18).toFixed(8);
+    
+        });
+        setInterval(()=>{
+            window.app.web3.eth.getBalance(window.app.wallet[0].address).then((bal)=>{
+                if(bal != this.weiBalance){
+                    this.weiBalance = bal;
+                }
+            });
+        },6000);
     }
 
     async onReset(){
