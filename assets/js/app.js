@@ -3,8 +3,9 @@ import {BASE16,BASE64,convert} from "./basecvt.js";
 
 export default class AppController{
     constructor(){
+        window.alert = window.toastr.info;
+        window.alert("Loading resources please wait...");
         setTimeout(async()=>{
-
             let data = await (await fetch("/xvault-web/assets/js/web3-1.0.0-beta.37.min.js")).text();
             await eval(data);
             this.web3 = new Web3();
@@ -16,7 +17,7 @@ export default class AppController{
             promises.push(this.fetchJSON("xchangeABI","/xvault-web/assets/json/xchange/xchange.abi.json"));
             promises.push(this.fetchJSON("xchangeAddrs","/xvault-web/assets/json/xchange/xchange.deployment.json"));
             await Promise.all(promises);
-            console.debug("App done loading .json files!");
+            window.alert("Resources loaded");
         },100);
     }
 
@@ -103,13 +104,17 @@ export default class AppController{
     }
 
     async decryptWallet(pin){
+
         return await this.web3.eth.accounts.wallet.load(await this.pbkdf(pin));
     }
 
     async pinPrompt(){
         //Prompt for PIN to ensure decryption
         let pin = prompt("Please Enter Your PIN To Continue");
-        return await this.decryptWallet(pin);
+        window.alert("Decrypting wallet, this can take some time, please standby...");
+        let wallet = await this.decryptWallet(pin);
+        window.alert("Decryption complete!");
+        return wallet;
     }
 
     async connectInternal(){
@@ -137,13 +142,11 @@ export default class AppController{
                 try{
                     await this.encryptMnemonic(bip39.generateMnemonic(256),pin);
                     return await this.postConnect();
-
                 }catch(err){
                     console.debug(err);
                 }
             }
         }
-        
         return false;
     }
 
@@ -230,6 +233,9 @@ export default class AppController{
         let result;
         if(window.confirm(`Would you like to send ${amount} ${symbol} to ${dest}?`)){
             try{
+                if(symbol.startsWith("X")){
+                    symbol = symbol.replace("X","");
+                }
                 let ctr = await this.XTokens[symbol];
                 let fin = (await ctr.displayToRaw(amount)).toString();
                 let wallet = await this.pinPrompt();
@@ -238,6 +244,7 @@ export default class AppController{
                 }
                 params.gas = await ctr.methods.transfer(dest,fin).estimateGas(params);
                 console.debug("params: ",params);
+                window.alert("Initiating Transfer");
                 result = await ctr.methods.transfer(dest,fin).send(params);
                 console.debug("result: ",result);
                 window.alert(`Successfully sent ${amount} ${symbol} to ${dest}! Transaction Hash is ${result.transactionHash}`);
@@ -249,6 +256,7 @@ export default class AppController{
     }
 
     async decryptMnemonic(pin){
+        window.alert("Decrypting mnemonic");
         let mnText = crypto.decrypt(localStorage["mnemonic"],await crypto.pbkdf(pin));
         console.debug(`mnemonic: ${mnText}`);
         return JSON.parse(mnText);
@@ -256,6 +264,7 @@ export default class AppController{
 
     async encryptMnemonic(mnemonic,pin){
         localStorage.clear();
+        window.alert("Encrypting mnemonic...");
         localStorage["mnemonic"] = crypto.encrypt(JSON.stringify(mnemonic),await crypto.pbkdf(pin));
         console.debug("encrypted mnemonic: ",localStorage["mnemonic"]);
         window.alert("Please write down the following words before continuing, you will need them later: "+mnemonic);
@@ -264,16 +273,20 @@ export default class AppController{
            await this.wallet.clear();
         }
         let wallet = this.web3.eth.accounts.wallet.create(0);
+        window.alert("Creating seed...");
         let pke = await this.pbkdf(seed);
         console.debug("pke: ",pke);
         await wallet.add(pke);
+        window.alert("Creating wallet...");
         console.debug("wallet: ",this.wallet);
         wallet.save(await this.pbkdf(pin));
+        window.alert("Wallet saved succesfully!");
         this.wallet = JSON.parse(localStorage["web3js_wallet"]);;
 
     }
 
     async pbkdf(p){
+        window.alert("Calculating encryption key...");
         return this.web3.utils.keccak256(this.web3.utils.bytesToHex(await crypto.pbkdf(""+p)));
     }
 

@@ -75,8 +75,12 @@ export default class PrimaryViewElement extends TelepathicElement{
             this.token_selector.innerHTML = "";
             for(let key of keys){
                 let opt = document.createElement("option");
-                opt.value = key;
                 opt.innerText = key;
+                if(key.startsWith("X")){
+                    key = key.replace("X","");
+                }
+                opt.value = key;
+                
                 if(key == last_token){
                     opt.setAttribute("selected","true");
                 }
@@ -99,8 +103,19 @@ export default class PrimaryViewElement extends TelepathicElement{
     async checkStats(){
         try{
             console.debug("Checking stats!");
-            this.weiBalance = await window.app.web3.eth.getBalance(this.address);
-            this.tokenBal = await this.current_token.balanceDisplay(window.app.currentAddress);
+            window.app.web3.eth.getBalance(this.address).then((bal)=>{
+                if(bal != this.weiBalance){
+                    this.weiBalance = bal;
+                    window.alert(`Your wei balance is now ${this.weiBalance}`);
+                }
+            });
+            
+            this.current_token.balanceDisplay(window.app.currentAddress).then((bal)=>{
+                if(bal != this.tokenBal){
+                    this.tokenBal = bal;
+                    window.alert(`Your ${this.current_symbol} balance is now ${this.tokenBal}`);
+                }
+            });
         }catch(err){
             console.debug(err);
         };

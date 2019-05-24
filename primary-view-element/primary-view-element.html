@@ -8,8 +8,9 @@
     <details id="recv-funds">
         <summary>Receive</summary>
         <h4>${address}</h4>
-        <h5 class="tooltip">wei balance: ${weiBalance}<span class="tooltiptext">This is the balance of network tokens, as wei which is the smallest unit of account.  They are used to fund purchases and also to pay transaction fees.</span></h5>
         <qr-code-element qrdata="${address}"></qr-code-element>
+        <h4 class="tooltip">wei balance: ${weiBalance}<span class="tooltiptext">This is the current balance of network tokens, as wei which is the smallest unit of account.  They are used to fund purchases and also to pay transaction fees.</span></h4>
+        
     </details>
     <details id="send-funds">
         <summary>Send</summary>

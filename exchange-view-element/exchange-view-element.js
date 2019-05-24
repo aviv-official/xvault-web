@@ -44,7 +44,7 @@ export default class ExchangeViewElement extends TelepathicElement{
         }            
         console.debug("onTrade: ",evt);
         this.statusPct = 10;
-        if(window.confirm(`Would you like to this ${this.inSymbol} ${this.amount_fld.value} for ${this.outSymbol} ${this.outAmt}`)){
+        if(window.confirm(`Would you like to exchange this ${this.inSymbol} ${this.amount_fld.value} for ${this.outSymbol} ${this.outAmt}`)){
             console.debug("Customer confirmed!");
             try{
                 let wallet = await window.app.pinPrompt();
@@ -55,6 +55,7 @@ export default class ExchangeViewElement extends TelepathicElement{
                 params.gas = await this.inToken.methods.approveAndCall(this.xchange.addr, this.inRaw, [0x0]).estimateGas(params);
                 console.debug("params: ",params);
                 this.statusPct++;
+                window.alert("Transfering funds to initiate exchange request");
                 let result = await this.inToken.methods.approveAndCall(this.xchange.addr, this.inRaw, [0x0]).send(params);
                 if(result){
                     console.debug("result: ",result);
@@ -62,7 +63,9 @@ export default class ExchangeViewElement extends TelepathicElement{
                     delete params.gas;
                     params.gas = await this.xchange.methods.swapTokens(this.inRaw, this.inToken.addr, this.outToken.addr).estimateGas(params);
                     this.statusPct++;
+                    window.alert("Initiating exchange request");
                     result = await this.xchange.methods.swapTokens(this.inRaw, this.inToken.addr, this.outToken.addr).send(params);
+                    window.alert("Exchange request completed");
                     if(result){
                         console.debug("result: ",result);
                         this.statusPct = 50;
@@ -71,6 +74,7 @@ export default class ExchangeViewElement extends TelepathicElement{
                         console.debug(`${this.outSymbol} ${amount}`);
                         this.statusPct++;
                         params.gas = await this.xchange.methods.withdraw(amount, this.outToken.addr).estimateGas(params);
+                        window.alert("Withdrawing funds from exchange, depositing to Primary account");
                         result = await this.xchange.methods.withdraw(amount, this.outToken.addr).send(params);
                         if(result){
                             console.debug("result: ",result);
@@ -86,7 +90,7 @@ export default class ExchangeViewElement extends TelepathicElement{
                                 this.statusPct = 100;
                                 await this.onSelect(evt);
                                 window.setTimeout((evt)=>{
-                                    window.alert("Transfer complete!  Your balances will update shortly");
+                                    window.alert("Exchange complete!  Your balances will update shortly");
                                     this.statusPct = 0;
                                 },5000);
                             }

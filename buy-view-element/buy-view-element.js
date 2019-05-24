@@ -29,11 +29,10 @@ export default class BuyViewElement extends TelepathicElement{
 
     async onBuyNow(evt){
         console.debug("evt",evt);
-        let tokens = this.buy_qty.value;
-        tokens = await this.current_token.displayToRaw(tokens);
         console.debug("token: ",this.current_token);
-        let wei = await this.current_token.methods.tokensToNet(tokens).call();
-
+        let tokens = await this.current_token.displayToRaw(this.buy_qty.value);
+        console.debug("tokens: ",tokens);
+        let wei = await this.current_token.methods.tokensToNet(""+tokens).call();
         console.debug(`About to buy ${tokens} ${this.symbol} cost: ${wei} wei`);
         let eth = math.multiply(wei,10**-18).toFixed(8);
         if(window.confirm(`Would you like to spend ${eth} ETH to purchase ${this.buy_qty.value} ${this.symbol}?`)){
