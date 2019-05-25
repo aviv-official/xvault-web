@@ -41,6 +41,7 @@ export default class SettingsViewElement extends TelepathicElement{
     }
 
     async unlock(pin){
+        await window.alert("Unlocking account, please wait...");
         this.mnemonic = await window.app.decryptMnemonic(pin);
         this.newmonic = this.mnemonic;
     }
