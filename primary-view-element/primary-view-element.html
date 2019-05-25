@@ -1,10 +1,10 @@
 <link rel="stylesheet" href="./primary-view-element/primary-view-element.css">
 <div> 
-    <h3>Your Account on ${netInfo.name}
+    <h3>Primary Account on ${netInfo.name}
     <select id="token-selector"></select>${tokenBal}</h3>
     <p style="float: left;">
         <h4 class="tooltip">wei balance: ${weiBalance}<span class="tooltiptext">This is the current balance of network tokens, as wei the smallest unit of account.  They are used to fund purchases and also to pay transaction fees.</span></h4>
-        <button class="flat" id="address-btn">${address}&#x1F4CB;</button>
+        ${address}
     </p>
     <!--<span id="balances">
         
@@ -14,8 +14,10 @@
     <button id="reload-btn" >Buy Tokens</button><br><br>
     
     <article id="recv-funds-area">
-        <summary>Receive</summary>       
-        <qr-code-element qrdata="${address}"></qr-code-element>
+        <summary>Receive</summary>
+        <!--<button class="flat" id="address-btn">  -->     
+            <qr-code-element qrdata="${address}" id="address-btn"></qr-code-element>
+        <!--</button>-->
     </article>
     <article id="send-funds-area" style="display: none;">
         <summary>Send</summary>
