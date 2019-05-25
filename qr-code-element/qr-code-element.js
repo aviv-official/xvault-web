@@ -41,6 +41,7 @@ export default class QrCodeElement extends HTMLElement{
         //console.log("replacing QR with : ",el);
         //this.$.innerHTML = el;
         this.innerHTML = el;
+        
     }
 
 }

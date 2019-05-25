@@ -1,23 +1,28 @@
 <link rel="stylesheet" href="./primary-view-element/primary-view-element.css">
 <div> 
-    <h2>Your Account on ${netInfo.name}</h2>
-    
-    <span id="balances">
-        <select id="token-selector"></select>${tokenBal}
-    </span><br>
-    <details id="recv-funds">
-        <summary>Receive</summary>
-        <h4>${address}<button title="Copy to clipboard"><b>&#128203;</b></button></h4>
-        <qr-code-element qrdata="${address}"></qr-code-element>
+    <h3>Your Account on ${netInfo.name}
+    <select id="token-selector"></select>${tokenBal}</h3>
+    <p style="float: left;">
         <h4 class="tooltip">wei balance: ${weiBalance}<span class="tooltiptext">This is the current balance of network tokens, as wei the smallest unit of account.  They are used to fund purchases and also to pay transaction fees.</span></h4>
+        <button class="flat" id="address-btn">${address}&#x1F4CB;</button>
+    </p>
+    <!--<span id="balances">
         
-    </details>
-    <details id="send-funds">
+    </span>--><br>
+    <button id="recv-funds-btn" >Receive</button>
+    <button id="send-funds-btn" >Send</button>
+    <button id="reload-btn" >Buy Tokens</button><br><br>
+    
+    <article id="recv-funds-area">
+        <summary>Receive</summary>       
+        <qr-code-element qrdata="${address}"></qr-code-element>
+    </article>
+    <article id="send-funds-area" style="display: none;">
         <summary>Send</summary>
         <send-view-element id="sendView"></send-view-element>
-    </details>
-    <details id="reload">
+    </article>
+    <article id="reload-area" style="display: none;">
         <summary>Buy Tokens</summary>
         <buy-view-element></buy-view-element>
-    </details>
+    </article>
 </div>

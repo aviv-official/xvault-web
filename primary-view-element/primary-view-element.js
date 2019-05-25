@@ -38,6 +38,19 @@ export default class PrimaryViewElement extends TelepathicElement{
         this.token_selector = this.$.querySelector("#token-selector");
         console.debug("token_selector: ",this.token_selector);
         this.token_selector.addEventListener('change', ()=>{this.onTokenChange()});
+        this.$.querySelector("#address-btn").addEventListener("click",(evt)=>{
+            console.debug("address-btn event: ",evt);
+            this.copyToClipBoard();
+        });
+    }
+
+    async copyToClipBoard(){
+        try {
+            await navigator.clipboard.writeText(this.address);
+            window.alert(`Address ${this.address} copied to clipboard`);
+        } catch (err) {
+            window.alert('Failed to copy: ', err);
+        }
     }
 
     async onTokenChange(){

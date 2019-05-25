@@ -86,6 +86,29 @@ details[open] summary:after {
 }
 
 button {
-  margin:2;
-  padding: 2;
+  
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+button.truncate {
+  margin:0;
+  padding:0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+button.flat{
+  border: 0;
+  background:silver;
+  box-shadow: none;
+  border-radius: 0px;
+  margin:0;
+  padding:0;
+}
+
+qr-code-element {
+  resize: both;
+  overflow: off;
 }
