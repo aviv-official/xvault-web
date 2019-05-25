@@ -52,39 +52,39 @@ export default class ExchangeViewElement extends TelepathicElement{
                 let params = {
                     from: wallet[0].address
                 }
-                params.gas = await this.inToken.methods.approveAndCall(this.xchange.addr, this.inRaw, [0x0]).estimateGas(params);
+                params.gas = await this.inToken.methods.approveAndCall(this.xchange.address, ""+this.inRaw, [0x0]).estimateGas(params);
                 console.debug("params: ",params);
                 this.statusPct++;
                 window.alert("Transfering funds to initiate exchange request");
-                let result = await this.inToken.methods.approveAndCall(this.xchange.addr, this.inRaw, [0x0]).send(params);
+                let result = await this.inToken.methods.approveAndCall(this.xchange.address, ""+this.inRaw, [0x0]).send(params);
                 if(result){
                     console.debug("result: ",result);
                     this.statusPct = 25;
                     delete params.gas;
-                    params.gas = await this.xchange.methods.swapTokens(this.inRaw, this.inToken.addr, this.outToken.addr).estimateGas(params);
+                    params.gas = await this.xchange.methods.swapTokens(""+this.inRaw, this.inToken.address, this.outToken.address).estimateGas(params);
                     this.statusPct++;
                     window.alert("Initiating exchange request");
-                    result = await this.xchange.methods.swapTokens(this.inRaw, this.inToken.addr, this.outToken.addr).send(params);
+                    result = await this.xchange.methods.swapTokens(""+this.inRaw, this.inToken.address, this.outToken.address).send(params);
                     window.alert("Exchange request completed");
                     if(result){
                         console.debug("result: ",result);
                         this.statusPct = 50;
                         delete params.gas;
-                        let amount = await this.xchange.methods.balanceOf(wallet[0].address, this.outToken.addr).call(params);
+                        let amount = await this.xchange.methods.balanceOf(wallet[0].address, this.outToken.address).call(params);
                         console.debug(`${this.outSymbol} ${amount}`);
                         this.statusPct++;
-                        params.gas = await this.xchange.methods.withdraw(amount, this.outToken.addr).estimateGas(params);
+                        params.gas = await this.xchange.methods.withdraw(""+amount, this.outToken.address).estimateGas(params);
                         window.alert("Withdrawing funds from exchange, depositing to Primary account");
-                        result = await this.xchange.methods.withdraw(amount, this.outToken.addr).send(params);
+                        result = await this.xchange.methods.withdraw(""+amount, this.outToken.address).send(params);
                         if(result){
                             console.debug("result: ",result);
                             this.statusPct = 75;
                             delete params.gas;
-                            let allowance = await this.outToken.methods.allowance(this.xchange.addr, wallet[0].address).call(params);
+                            let allowance = await this.outToken.methods.allowance(this.xchange.address, wallet[0].address).call(params);
                             console.debug("allowance: ",allowance);
                             this.statusPct = 80;
-                            params.gas = await this.outToken.methods.transferFrom(this.xchange.addr, wallet[0].address, allowance).estimateGas(params);
-                            result = await this.outToken.methods.transferFrom(this.xchange.addr, wallet[0].address, allowance).send(params);
+                            params.gas = await this.outToken.methods.transferFrom(this.xchange.address, wallet[0].address, ""+allowance).estimateGas(params);
+                            result = await this.outToken.methods.transferFrom(this.xchange.address, wallet[0].address, ""+allowance).send(params);
                             if(result){
                                 console.debug("result: ",result);
                                 this.statusPct = 100;
@@ -119,19 +119,24 @@ export default class ExchangeViewElement extends TelepathicElement{
         }
         this.inSymbol = this.in_token_selector.value;
         this.outSymbol = this.out_token_selector.value;
-        
+        console.debug(`inSymbol ${this.inSymbol} outSymbol ${this.outSymbol}`);
+        console.debug("Tokens: ",window.app.XTokens); 
         this.inToken = window.app.XTokens[this.inSymbol];
-        this.outToken = window.app.XTokens[this.outSymbol]; 
-        console.debug(`inToken ${this.inToken.addr} outToken ${this.outToken.addr} xchange ${this.xchange.addr}`);
+        this.outToken = window.app.XTokens[this.outSymbol];
+       
+        console.debug(`inToken ${this.inToken.address} outToken ${this.outToken.address} xchange ${this.xchange.address}`);
         //Using promises instead of async / await to allow for parallel ops
         if(this.amount_fld.value){
             this.inToken.displayToRaw(this.amount_fld.value).then(async (val)=>{
-                console.debug(`val: ${val}`);
-                this.inRaw = val;
-                let net = await this.xchange.methods.tokensToNet(val,this.inToken.addr).call();
-                let tokens = await this.xchange.methods.netToTokens(net,this.outToken.addr).call();
-                console.debug(`tokens: ${tokens}`);
-                this.outAmt = await this.outToken.rawToDisplay(tokens);
+                try{
+                    console.debug(`val: ${val}`);
+                    this.inRaw = val;
+                    let net = await this.xchange.methods.tokensToNet(""+val,this.inToken.address).call();
+                    console.debug(`net: ${net}`);
+                    let tokens = await this.xchange.methods.netToTokens(""+net,this.outToken.address).call();
+                    console.debug(`tokens: ${tokens}`);
+                    this.outAmt = await this.outToken.rawToDisplay(""+tokens);
+                }catch(err){console.error(err)};
             });
         }
         this.inToken.balanceDisplay(this.address).then((val)=>{

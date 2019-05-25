@@ -161,13 +161,13 @@ export default class AppController{
         this.xtokens = {};
         let network = localStorage["network_id"];
         this.xchange = await new this.Web3.eth.Contract(this.xchangeABI,this.xchangeAddrs[network]);
-        this.xchange.addr = this.xchangeAddrs[network];
+        this.xchange.address = this.xchangeAddrs[network];
         let contracts = this.xtokenAddrs[network];
         for(let contract of contracts){
             let keys = Object.getOwnPropertyNames(contract);
             try{
                 let ctr = await new this.Web3.eth.Contract(this.xtokenABI,contract[keys[0]]);
-                ctr.addr = contract[keys[0]];
+                ctr.address = contract[keys[0]];
                 ctr.rawToDisplay = async function(val){
                     let dec = await this.methods.decimals().call();
                     //console.debug(`val: ${val} : decimals ${dec}`);
