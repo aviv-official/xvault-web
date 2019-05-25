@@ -269,9 +269,6 @@ export default class AppController{
         console.debug("encrypted mnemonic: ",localStorage["mnemonic"]);
         window.alert("Please write down the following words before continuing, you will need them later: "+mnemonic);
         let seed = await (await bip39.mnemonicToSeed(mnemonic)).toString('hex');
-        if(this.wallet){
-           await this.wallet.clear();
-        }
         let wallet = this.web3.eth.accounts.wallet.create(0);
         window.alert("Creating seed...");
         let pke = await this.pbkdf(seed);

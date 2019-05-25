@@ -29,7 +29,7 @@ export default class SettingsViewElement extends TelepathicElement{
                     let pin2 = window.prompt("Please enter PIN for the second time");
                     if(pin1 == pin2){
                         await window.app.encryptMnemonic(this.mnemonic,pin1);
-                        window.location ="./app.html";
+                        return await window.app.postConnect();
                     }
                 }
             }else{
