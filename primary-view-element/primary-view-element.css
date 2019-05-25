@@ -1,19 +1,4 @@
-details{
-    border: 1px;
-    border-color: white;
-    float: left;
-}
-
-details summary::-webkit-details-marker {
-    color: #fff;
-    font-size: 500%;
-}
-
-summary::-webkit-details-marker {
-    display: none
-}
-
-select, summary {
+select {
   background-color: black;
   box-shadow: 0 5px 0 grey;
   color: white;
@@ -23,40 +8,16 @@ select, summary {
   text-transform: uppercase;
 }
 
-select, summary:hover {
+select:hover {
   background-color: grey;
   cursor: pointer;
 }
 
-select, summary:active {
+select:active {
   box-shadow: none;
   top: 5px;
 }
 
-/*
-summary:after {
-    border-radius: 5px; 
-    color: #fff; 
-    float: left; 
-    font-size: 1.5em; 
-    font-weight: bold; 
-    margin: -5px 10px 0 0; 
-    padding: 0; 
-    text-align: center; 
-    width: 20px;
-}
-
-
-details[open] summary:after {
-    content: "-";
-}
-
-.details-animated {
-    transition: height 1s ease;
-}
-.details-animated:not([open]) { height: 1.25em; }
-.details-animated[open] { height: 3.75em; }
-*/
 
 /* Tooltip container */
 .tooltip {
@@ -84,21 +45,19 @@ details[open] summary:after {
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
-
+/*
 button {
   
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-button.truncate {
-  margin:0;
-  padding:0;
+.truncate {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
+*/
 button.flat{
   border: 0;
   background:silver;
@@ -111,4 +70,30 @@ button.flat{
 qr-code-element {
   resize: both;
   overflow: off;
+}
+
+/* Style the tab buttons */
+.tablink {
+  background-color: #555;
+  color: white;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 2%;
+  
+  width: 25%;
+}
+
+/* Change background color of buttons on hover */
+.tablink:hover {
+  background-color: #777;
+}
+
+/* Set default styles for tab content */
+.tabcontent {
+  color: white;
+  display: none;
+  padding: 50px;
+  text-align: center;
 }

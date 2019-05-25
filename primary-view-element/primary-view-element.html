@@ -1,29 +1,31 @@
 <link rel="stylesheet" href="./primary-view-element/primary-view-element.css">
-<div> 
-    <h3>Primary Account on ${netInfo.name}
-    <select id="token-selector"></select>${tokenBal}</h3>
+<div class="truncate"> 
+    <h3>Primary Account on ${netInfo.name}</h3>
     <p style="float: left;">
         <h4 class="tooltip">wei balance: ${weiBalance}<span class="tooltiptext">This is the current balance of network tokens, as wei the smallest unit of account.  They are used to fund purchases and also to pay transaction fees.</span></h4>
-        ${address}
     </p>
-    <!--<span id="balances">
-        
-    </span>--><br>
-    <button id="recv-funds-btn" >Receive</button>
-    <button id="send-funds-btn" >Send</button>
-    <button id="reload-btn" >Buy Tokens</button><br><br>
     
-    <article id="recv-funds-area">
+    <!--<span id="balances">
+
+    </span>-->
+    <p><select id="token-selector"></select>${tokenBal}</p>
+    <br>
+    <button id="send-funds-btn" class="tablink"><h2>&#x1F4B8;</h2></button>
+    <button id="recv-funds-btn" class="tablink"><h2>&#x1F4E5;</h2></button>
+    <button id="reload-btn" class="tablink"><h2>&#x1F4B0;</h2></button><br><br>
+    
+    <article id="recv-funds-area" class="tabcontent">
         <summary>Receive</summary>
+        <p>${address}</p>
         <!--<button class="flat" id="address-btn">  -->     
             <qr-code-element qrdata="${address}" id="address-btn"></qr-code-element>
         <!--</button>-->
     </article>
-    <article id="send-funds-area" style="display: none;">
+    <article id="send-funds-area" class="tabcontent" style="display: none;">
         <summary>Send</summary>
         <send-view-element id="sendView"></send-view-element>
     </article>
-    <article id="reload-area" style="display: none;">
+    <article id="reload-area" class="tabcontent" style="display: none;">
         <summary>Buy Tokens</summary>
         <buy-view-element></buy-view-element>
     </article>
