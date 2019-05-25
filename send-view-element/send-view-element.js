@@ -40,7 +40,7 @@ export default class SendViewElement extends TelepathicElement{
             await this.closeCamera();
         }else{
             await this.openCamera();
-        }
+        } 
         this.isCameraOpen = !this.isCameraOpen;
     }
 
@@ -48,20 +48,23 @@ export default class SendViewElement extends TelepathicElement{
         this.scanBtn = this.$.querySelector("#qrScanBtn");
         let v = this.$.querySelector("#videoEl");
         this.qrScanner = new QrScanner(v, (result) =>{ 
-            console.log('decoded qr code:', result);
-            result = result.split(":");
-            if(Array.isArray(result)){
-                this.currentSymbol = result[0].toUpperCase();
-                let remains = result[1].split("/\?|\&/");
-                this.destAddr = remains[0];
-                for(let remain of remains){
-                    let pair = remain.split("=");
-                    let key = pair[0];
-                    let value = pair[1];
-                    this[key] = value;
+            window.alert('decoded qr code:', result);
+            if(result.includes(":")){
+                result = result.split(":");
+                if(Array.isArray(result)){
+                    this.currentSymbol = result[0].toUpperCase();
+                    let remains = result[1].split("/\?|\&/");
+                    this.destAddr = remains[0];
+                    for(let remain of remains){
+                        let pair = remain.split("=");
+                        let key = pair[0];
+                        let value = pair[1];
+                        this[key] = value;
+                    }
                 }
+                    
             }else{
-                this.destAddr = result;
+                    this.destAddr = result;
             }
             this.toggleCamera();
         });
