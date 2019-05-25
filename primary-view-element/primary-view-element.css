@@ -80,8 +80,6 @@ qr-code-element {
   border: none;
   outline: none;
   cursor: pointer;
-  padding: 2%;
-  
   width: 25%;
 }
 

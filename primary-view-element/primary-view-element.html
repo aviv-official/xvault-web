@@ -10,23 +10,24 @@
     </span>-->
     <p><select id="token-selector"></select>${tokenBal}</p>
     <br>
-    <button id="send-funds-btn" class="tablink"><h2>&#x1F4B8;</h2></button>
-    <button id="recv-funds-btn" class="tablink"><h2>&#x1F4E5;</h2></button>
-    <button id="reload-btn" class="tablink"><h2>&#x1F4B0;</h2></button><br><br>
-    
-    <article id="recv-funds-area" class="tabcontent">
-        <summary>Receive</summary>
-        <p>${address}</p>
-        <!--<button class="flat" id="address-btn">  -->     
+    <div id="nav-group">
+        <button id="send-funds-btn" data-link="send-funds-area" class="tablink"><h2>&#x1F4B8;</h2></button>
+        <button id="recv-funds-btn" data-link="recv-funds-area" class="tablink"><h2>&#x1F4E5;</h2></button>
+        <button id="reload-btn" data-link="reload-area" class="tablink"><h2>&#x1F4B0;</h2></button><br><br>
+    </div>
+    <div id="page-group">
+        <article id="recv-funds-area" class="tabcontent">
+            <summary>Receive</summary>
+            <h4>${address}</h4>
             <qr-code-element qrdata="${address}" id="address-btn"></qr-code-element>
-        <!--</button>-->
-    </article>
-    <article id="send-funds-area" class="tabcontent" style="display: none;">
-        <summary>Send</summary>
-        <send-view-element id="sendView"></send-view-element>
-    </article>
-    <article id="reload-area" class="tabcontent" style="display: none;">
-        <summary>Buy Tokens</summary>
-        <buy-view-element></buy-view-element>
-    </article>
+        </article>
+        <article id="send-funds-area" class="tabcontent">
+            <summary>Send</summary>
+            <send-view-element id="sendView"></send-view-element>
+        </article>
+        <article id="reload-area" class="tabcontent" >
+            <summary>Buy Tokens</summary>
+            <buy-view-element></buy-view-element>
+        </article>
+    </div>
 </div>

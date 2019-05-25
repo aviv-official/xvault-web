@@ -42,8 +42,35 @@ export default class PrimaryViewElement extends TelepathicElement{
             console.debug("address-btn event: ",evt);
             this.copyToClipBoard();
         });
+        this.navGroup = this.$.querySelector("#nav-group");
+        this.pageGroup = this.$.querySelector("#page-group").querySelectorAll("article");
+        console.debug("navGroup: ",this.navGroup);
+        let btns = this.navGroup.querySelectorAll("button");
+        console.debug("btns: ",btns);
+        btns.forEach((btn)=>{
+            console.debug("btn: ",btn);
+            btn.addEventListener("click",(evt)=>{
+                evt.src = btn;
+                this.showSection(evt);
+            })
+        })
     }
 
+    showSection(evt){
+        console.debug("nav-btn event: ",evt);
+        let src = evt.src;
+        let dest = src.getAttribute("data-link");
+        this.pageGroup.forEach((article)=>{
+            console.debug("article: ",article);
+            if(article.id == dest){
+                console.debug("showing ",article.id);
+                article.style.display = "block";
+            }else{
+                console.debug("hiding ",article.id);
+                article.style.display = "none";
+            }
+        });
+    }
     async copyToClipBoard(){
         try {
             await navigator.clipboard.writeText(this.address);
