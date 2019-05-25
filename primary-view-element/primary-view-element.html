@@ -1,32 +1,29 @@
 <link rel="stylesheet" href="./primary-view-element/primary-view-element.css">
 <div class="truncate"> 
     <h3>Primary Account on ${netInfo.name}</h3>
-    <p style="float: left;">
-        <h4 class="tooltip">wei balance: ${weiBalance}<span class="tooltiptext">This is the current balance of network tokens, as wei the smallest unit of account.  They are used to fund purchases and also to pay transaction fees.</span></h4>
-    </p>
-    
-    <!--<span id="balances">
-
-    </span>-->
     <p><select id="token-selector"></select>${tokenBal}</p>
-    <br>
+    <p style="float: left;">
+        <h3 class="tooltip">wei balance: ${weiBalance}<span class="tooltiptext">This is the current balance of network tokens, as wei the smallest unit of account.  They are used to fund purchases and also to pay transaction fees.</span></h3>
+    </p>
     <div id="nav-group">
         <button id="send-funds-btn" data-link="send-funds-area" class="tablink"><h2>&#x1F4B8;</h2></button>
         <button id="recv-funds-btn" data-link="recv-funds-area" class="tablink"><h2>&#x1F4E5;</h2></button>
         <button id="reload-btn" data-link="reload-area" class="tablink"><h2>&#x1F4B0;</h2></button><br><br>
     </div>
+    <br><br>
     <div id="page-group">
         <article id="recv-funds-area" class="tabcontent">
-            <summary>Receive</summary>
+            <h2>&#x1F4E5;&nbsp;&nbsp;Receive ${current_symbol}</h2>
             <h4>${address}</h4>
             <qr-code-element qrdata="${address}" id="address-btn"></qr-code-element>
         </article>
         <article id="send-funds-area" class="tabcontent">
-            <summary>Send</summary>
+
+            <h2>&#x1F4B8;&nbsp;&nbsp;Transfer ${current_symbol}</h2>
             <send-view-element id="sendView"></send-view-element>
         </article>
         <article id="reload-area" class="tabcontent" >
-            <summary>Buy Tokens</summary>
+            <h2>&#x1F4B0;&nbsp;&nbsp;Buy ${current_symbol}</h2>
             <buy-view-element></buy-view-element>
         </article>
     </div>

@@ -92,6 +92,6 @@ qr-code-element {
 .tabcontent {
   color: white;
   display: none;
-  padding: 50px;
-  text-align: center;
+  padding: 5px;
+  text-align: left;
 }
