@@ -77,10 +77,13 @@ qr-code-element {
   background-color: #555;
   color: white;
   float: left;
-  border: none;
+  border: 1px;
+  border-color: white;
   outline: none;
   cursor: pointer;
-  width: 25%;
+  width: 33%;
+  height: 10%;
+  font-size: 60px;
 }
 
 /* Change background color of buttons on hover */

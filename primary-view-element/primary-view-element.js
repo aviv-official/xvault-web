@@ -86,11 +86,13 @@ export default class PrimaryViewElement extends TelepathicElement{
             localStorage["lastToken"] = this.token_selector.value;
             this.current_token = window.app.XTokens[this.token_selector.value];
             this.current_symbol = this.token_selector.value;
-            console.debug("current address: ",window.app.currentAddress);
-            this.tokenBal = await this.current_token.balanceDisplay(window.app.currentAddress);
-            this.buy_view = this.$.querySelector("buy-view-element");
-            console.debug("buy_view: ",this.buy_view);
-            this.buy_view.setAttribute("symbol",this.current_symbol);
+            if(window.app.currentAddress){
+                console.debug("current address: ",window.app.currentAddress);
+                this.tokenBal = await this.current_token.balanceDisplay(window.app.currentAddress);
+                this.buy_view = this.$.querySelector("buy-view-element");
+                console.debug("buy_view: ",this.buy_view);
+                this.buy_view.setAttribute("symbol",this.current_symbol);
+            }
         }catch(err){
             console.debug(err);
         }
@@ -141,23 +143,25 @@ export default class PrimaryViewElement extends TelepathicElement{
     }
 
     async checkStats(){
-        try{
-            console.debug("Checking stats!");
-            window.app.web3.eth.getBalance(this.address).then((bal)=>{
-                if(bal != this.weiBalance){
-                    this.weiBalance = bal;
-                    window.alert(`Your wei balance is now ${this.weiBalance}`);
-                }
-            });
-            
-            this.current_token.balanceDisplay(window.app.currentAddress).then((bal)=>{
-                if(bal != this.tokenBal){
-                    this.tokenBal = bal;
-                    window.alert(`Your ${this.current_symbol} balance is now ${this.tokenBal}`);
-                }
-            });
-        }catch(err){
-            console.debug(err);
-        };
+        if(this.address !== "unset"){
+            try{
+                console.debug("Checking stats!");
+                window.app.web3.eth.getBalance(this.address).then((bal)=>{
+                    if(bal != this.weiBalance){
+                        this.weiBalance = bal;
+                        window.alert(`Your wei balance is now ${this.weiBalance}`);
+                    }
+                });
+                
+                this.current_token.balanceDisplay(window.app.currentAddress).then((bal)=>{
+                    if(bal != this.tokenBal){
+                        this.tokenBal = bal;
+                        window.alert(`Your ${this.current_symbol} balance is now ${this.tokenBal}`);
+                    }
+                });
+            }catch(err){
+                console.debug(err);
+            };
+        }
     }
 }
