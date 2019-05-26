@@ -118,9 +118,6 @@ export default class PrimaryViewElement extends TelepathicElement{
             for(let key of keys){
                 let opt = document.createElement("option");
                 opt.innerText = key;
-                if(key.startsWith("X")){
-                    key = key.replace("X","");
-                }
                 opt.value = key;
                 
                 if(key == last_token){

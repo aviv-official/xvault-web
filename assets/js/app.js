@@ -233,9 +233,7 @@ export default class AppController{
         let result;
         if(window.confirm(`Would you like to send ${amount} ${symbol} to ${dest}?`)){
             try{
-                if(symbol.startsWith("X")){
-                    symbol = symbol.replace("X","");
-                }
+                
                 let ctr = await this.XTokens[symbol];
                 let fin = (await ctr.displayToRaw(amount)).toString();
                 let wallet = await this.pinPrompt();

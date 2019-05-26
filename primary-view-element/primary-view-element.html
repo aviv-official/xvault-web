@@ -1,30 +1,34 @@
 <link rel="stylesheet" href="./primary-view-element/primary-view-element.css">
 <div class="truncate"> 
-    <h3>Primary Account on ${netInfo.name}</h3>
-    <p><select id="token-selector"></select>${tokenBal}</p>
-    <p style="float: left;">
-        <h3 class="tooltip">wei balance: ${weiBalance}<span class="tooltiptext">This is the current balance of network tokens, as wei the smallest unit of account.  They are used to fund purchases and also to pay transaction fees.</span></h3>
-    </p>
+    <h3>${netInfo.name}</h3>
     <div id="nav-group">
         <button id="send-funds-btn" data-link="send-funds-area" class="tablink">&#x1F4B8;</button>
         <button id="recv-funds-btn" data-link="recv-funds-area" class="tablink">&#x1F4E5;</button>
-        <button id="reload-btn" data-link="reload-area" class="tablink">&#x1F4B0;</button><br><br>
-    </div>
-    <br><br>
+        <button id="reload-btn" data-link="reload-area" class="tablink">&#x1F4B0;</button>
+        <button id="burn-btn" data-link="burn-area" class="tablink">&#x1F525;</button>
+    </div><br><br>
     <div id="page-group">
+        
+        <p style="float: left;">
+            <h3 class="tooltip">wei balance: ${weiBalance}<span class="tooltiptext">This is the current balance of network tokens, as wei the smallest unit of account.  They are used to fund purchases and also to pay transaction fees.</span></h3>
+        </p>
+        <div><select id="token-selector"></select>${tokenBal}</div>
         <article id="recv-funds-area" class="tabcontent">
             <h2>&#x1F4E5;&nbsp;&nbsp;Receive ${current_symbol}</h2>
             <h4>${address}</h4>
             <qr-code-element qrdata="${address}" id="address-btn"></qr-code-element>
         </article>
         <article id="send-funds-area" class="tabcontent">
-
             <h2>&#x1F4B8;&nbsp;&nbsp;Transfer ${current_symbol}</h2>
             <send-view-element id="sendView"></send-view-element>
         </article>
         <article id="reload-area" class="tabcontent" >
             <h2>&#x1F4B0;&nbsp;&nbsp;Buy ${current_symbol}</h2>
             <buy-view-element></buy-view-element>
+        </article>
+        <article id="burn-area" class="tabcontent" >
+            <h2 class="tooltip">&#x1F525;&nbsp;&nbsp;Burn ${current_symbol}<span class="tooltiptext">Burning tokens will convert them to XAV.  Burning XAV will convert it to wei</span></h2>
+            <burn-view-element></burn-view-element>
         </article>
     </div>
 </div>
