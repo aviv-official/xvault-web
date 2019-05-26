@@ -40,18 +40,23 @@ export default class BurnViewElement extends TelepathicElement{
         let wei = await this.current_token.methods.tokensToNet(""+tokens).call();
         console.debug(`About to buy ${tokens} ${this.symbol} cost: ${wei} wei`);
         let eth = math.multiply(wei,10**-18).toFixed(8);
-        if(window.confirm(`Would you like to spend ${eth} ETH to purchase ${this.buy_qty.value} ${this.symbol}?`)){
+        if(window.confirm(`Would you like to burn ${this.burn_qty.value} ${this.symbol}?`)){
             try{
                 let wallet = await window.app.pinPrompt();
                 console.debug("ALERT: ",window.alert);
-                window.alert(`Sending ${eth} ETH to purchase ${this.buy_qty.value} ${this.symbol}`);
+                window.alert(`Burning ${this.buy_qty.value} ${this.symbol}`);
                 console.debug("wallet is ",wallet);
-                console.debug(`wei: ${wei} needed`);
+                
                 let params = {
                     value : wei,
                     from : wallet[0].address
                 }
-                params.gas = await this.current_token.methods.mint(wallet[0].address).estimateGas(params);
+
+                //TODO:  Burn cannot be used quite this way.  We need to transfer to XChange if the symbol is not XAV
+                //If we are trying to burn something not XAV we should direct the customer to the xchange view, or possibly run the exchange ourselves
+                //Either way the code is sitting in xchange
+
+                //params.gas = await this.current_token.methods.mint(wallet[0].address).estimateGas(params);
                 if(params.gas < 60000){
                     params.gas = 60000;
                 }
@@ -68,21 +73,20 @@ export default class BurnViewElement extends TelepathicElement{
     }
 
     async onReady(){
-        console.warn(`${this.constructor.name} entering onReady!`);
         console.debug(`${this.constructor.name} is ready!`);
-        this.buy_qty = this.$.querySelector("#buy-qty");
-        this.buy_now_btn = this.$.querySelector("#buy-now-btn");
-        console.debug("buy_now_btn: ",this.buy_now_btn);
+        this.burn_qty = this.$.querySelector("#burn-qty");
+        this.burn_now_btn = this.$.querySelector("#burn-now-btn");
+        
         /*
         this.buy_now_btn.addEventListener('click',(evt)=>{
             console.debug("buy now pressed!",evt);
             this.onBuyNow(evt);
         });
         */
-        this.buy_qty.addEventListener("keypress",async (evt)=>{
-            let tokens = await this.current_token.displayToRaw(this.buy_qty.value);
+        this.burn_qty.addEventListener("keypress",async (evt)=>{
+            let tokens = await this.current_token.displayToRaw(this.burn_qty.value);
             this.price = await this.current_token.methods.tokensToNet(""+tokens).call();
-            console.debug(`About to buy ${tokens} ${this.symbol} cost: ${this.price} wei`);
+            console.debug(`About to burn ${tokens} ${this.symbol}`);
            
         });
         setInterval(()=>{

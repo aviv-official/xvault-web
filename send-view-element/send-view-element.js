@@ -9,8 +9,20 @@ export default class SendViewElement extends TelepathicElement{
         this.destAmt = "";
         this.isCameraOpen = false;
         window.sendView = this;
+        this.a=new AudioContext();
     }
 
+    beep(vol, freq, duration){
+        let v=this.a.createOscillator();
+        let u=this.a.createGain();
+        v.connect(u);
+        v.frequency.value=freq;
+        v.type="square";
+        u.connect(this.a.destination);
+        u.gain.value=vol*0.01;
+        v.start(this.a.currentTime);
+        v.stop(this.a.currentTime+duration*0.001);
+    }
     async onReady(){
         console.warn(`${this.constructor.name} entering onReady!`);
         this.scanBtn = this.$.querySelector("#qrScanBtn");
@@ -19,7 +31,6 @@ export default class SendViewElement extends TelepathicElement{
         this.sendBtn.addEventListener("click",(evt)=>{this.sendFunds(evt);});
         //this.reset();
         console.debug(`${this.constructor.name} is ready!`);
-
     }
 
     async reset(){}
@@ -47,7 +58,16 @@ export default class SendViewElement extends TelepathicElement{
     async openCamera(){
         this.scanBtn = this.$.querySelector("#qrScanBtn");
         let v = this.$.querySelector("#videoEl");
-        this.qrScanner = new QrScanner(v, (result) =>{ 
+        if(navigator.vibrate){
+            navigator.vibrate(200);
+        }
+        this.beep(999, 220, 300);
+        
+        this.qrScanner = new QrScanner(v, (result) =>{
+            this.beep(100, 520, 200);
+            if(navigator.vibrate){
+                navigator.vibrate([300, 300, 300]);
+            } 
             window.alert('decoded qr code:', result);
             if(result.includes(":")){
                 result = result.split(":");
@@ -64,7 +84,7 @@ export default class SendViewElement extends TelepathicElement{
                 }
                     
             }else{
-                    this.destAddr = result;
+                this.destAddr = result;
             }
             this.toggleCamera();
         });
@@ -77,5 +97,10 @@ export default class SendViewElement extends TelepathicElement{
         this.qrScanner.destroy();
         this.scanBtn.removeEventListener("clicked",this.closeCamera);
         this.scanBtn.addEventListener("clicked",this.openCamera);
+        if(navigator.vibrate){
+            navigator.vibrate(2000);
+        }
+        this.beep(999, 210, 800); 
+        this.beep(999, 500, 800);
     }
 }
