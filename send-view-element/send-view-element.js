@@ -61,7 +61,7 @@ export default class SendViewElement extends TelepathicElement{
         if(navigator.vibrate){
             navigator.vibrate(200);
         }
-        this.beep(999, 220, 300);
+        this.beep(999, 1000, 300);
         
         this.qrScanner = new QrScanner(v, (result) =>{
             this.beep(100, 520, 200);
@@ -100,7 +100,7 @@ export default class SendViewElement extends TelepathicElement{
         if(navigator.vibrate){
             navigator.vibrate(2000);
         }
-        this.beep(999, 210, 800); 
-        this.beep(999, 500, 800);
+        //this.beep(999, 210, 800); 
+        this.beep(999, 500, 200);
     }
 }
