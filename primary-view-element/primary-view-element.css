@@ -74,7 +74,7 @@ qr-code-element {
 
 /* Style the tab buttons */
 .tablink {
-  background-color: #555;
+  background-color:black;
   color: white;
   float: left;
   border: 1px;
@@ -82,7 +82,7 @@ qr-code-element {
   outline: none;
   cursor: pointer;
   width: 25%;
-  
+  opacity: 50;
   font-size: 2rem;
 }
 
