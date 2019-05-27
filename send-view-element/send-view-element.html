@@ -1,12 +1,17 @@
-<div class="box" style="border: 1px white">
-    <span>
-    <input id="destFld" value=${destAddr} placeholder="destination address" required autofocus>
-    <button class="btn" id="qrScanBtn"><img src="/xvault-web/images/icons/qrcode-solid.svg" width="10"></button>
-    </span><br>
-    <span>
-        <input id="destamt" value=${destAmt} placeholder="0.00" required >
-        <button id="sendBtn">Send!</button>
-    </span>
-    <br>
+<link rel="stylesheet" href="./assets/css/main.css">
+
+<form>
+    <div class="fields">
+        <div class="field">
+            <label for="destFld">Destination</label>
+            <input id="destFld" value=${destAddr} placeholder="destination address" required autofocus>
+            <button id="qrScanBtn">&#x1F4A0</button>
+            <label for="destamt">Amount</label>
+            <input id="destamt" value=${destAmt} placeholder="0.00" required class="field half" >
+        </div>
+    </div>
+    <div class="actions">
+        <button id="sendBtn" class="primary">Send!</button>
+    </div>
     <video id="videoEl" autoplay height="250" width="250"></video>
-</div>
+</form>
