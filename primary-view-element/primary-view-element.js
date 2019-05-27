@@ -72,11 +72,30 @@ export default class PrimaryViewElement extends TelepathicElement{
         });
     }
     async copyToClipBoard(){
+        let permission = {state : 'denied'};
         try {
-            await navigator.clipboard.writeText(this.address);
-            window.alert(`Address ${this.address} copied to clipboard`);
+            if(navigator.permissions){
+                permission = await navigator.permissions.query({name:'clipboard-write'});
+            }
+            console.debug("permission for clipboard is ",permission);
+            if(permission.state == 'granted'){
+                await navigator.clipboard.writeText(this.address);
+                window.alert(`Address ${this.address} copied to clipboard`);
+            }else{
+                let x = document.createElement("input");
+                x.innerText = this.address;
+                this.appendChild(x);
+                let range = document.createRange();
+                range.selectNode(x);
+                window.getSelection().addRange(range);
+                let successful = document.execCommand('copy');
+                let msg = successful ? 'successfully' : 'unsuccessfully';
+                window.alert(`${this.address} was ${msg} copied to the clipboard`);
+                this.removeChild(x);
+            }
         } catch (err) {
-            window.alert('Failed to copy: ', err);
+            console.error(err);
+            window.alert("Failed to copy: "+err);
         }
     }
 
