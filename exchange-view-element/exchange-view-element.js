@@ -30,13 +30,14 @@ export default class ExchangeViewElement extends TelepathicElement{
         this.out_token_selector = this.$.querySelector("#out-token-selector");
         this.setSelectors();
         this.amount_fld.addEventListener("change",(evt)=>{this.onSelect(evt)});
-        this.in_token_selector.addEventListener("click",(evt)=>{this.onSelect(evt)});
-        this.out_token_selector.addEventListener("click",(evt)=>{this.onSelect(evt)});
+        this.in_token_selector.addEventListener("change",(evt)=>{this.onSelect(evt)});
+        this.out_token_selector.addEventListener("change",(evt)=>{this.onSelect(evt)});
         
         this.onSelect();
     }
 
     async onTrade(evt){
+        evt.preventDefault(); 
         if(this.outAmt == 0){
             await this.onSelect(evt);
             window.setTimeout((evt)=>{this.onTrade(evt)},1000);
@@ -145,8 +146,6 @@ export default class ExchangeViewElement extends TelepathicElement{
         this.outToken.balanceDisplay(this.address).then((val)=>{
             this.outTokenBal = val;
         });
-    
-        
     }
 
     setSelectors(){

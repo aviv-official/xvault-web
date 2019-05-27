@@ -39,6 +39,7 @@ export default class SendViewElement extends TelepathicElement{
         this.parent = obj;
     }
     async sendFunds(evt){
+        evt.preventDefault();
         let amount = this.destAmt;
         let destAddr = this.destAddr;
         this.parent.sendCB(destAddr,amount);
@@ -47,6 +48,7 @@ export default class SendViewElement extends TelepathicElement{
     async toggleCamera(evt){
         //console.debug("camera btn clicked! ",evt);
         //console.debug("this is: ",this);
+        evt.preventDefault();
         if(this.isCameraOpen){
             await this.closeCamera();
         }else{
