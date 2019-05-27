@@ -53,7 +53,7 @@ export default class AppController{
 
     async onPoll(){
         try{
-            let primaryViews = [...document.getElementsByTagName("primary-view-element")];
+            let primaryViews = [...document.getElementsByTagName("wallet-view-element")];
             let oldAddr = localStorage["selectedAddress"];
             let oldNet = localStorage["network_id"];
             //console.debug("this: ",this);

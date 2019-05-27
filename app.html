@@ -47,23 +47,23 @@
                 </nav>
             </header>
             <div id="main">
-                <article id="primary-act">
-                    <h2 class="major">Primary Account</h2>
-                    <primary-view-element></primary-view-element>
+                <article id="wallet-view">
+                    <h2 class="major">Wallet</h2>
+                    <wallet-view-element></wallet-view-element>
                 </article>
-                <article id="exchange-act">
-                    <h2 class="major">Exchange Account</h2>
+                <article id="exchange-view">
+                    <h2 class="major">Exchange</h2>
                     <exchange-view-element></exchange-view-element>
                 </article>
-                <article id="mm-act">
+                <article id="mm-view">
                     <h2 class="major">Money Market</h2>
                     <!--<mm-view-element></mm-view-element>-->
                 </article>
-                <article id="margin-act">
+                <article id="margin-view">
                     <h2 class="major">Margin Account</h2>
                     <!--<ma-view-element></ma-view-element>-->
                 </article>
-                <article id="rewards-act">
+                <article id="rewards-view">
                     <h2 class="major">Rewards</h2>
                     <!--<rewards-view-element></rewards-view-element>-->
                 </article>
@@ -88,11 +88,11 @@
                     let menu = document.getElementById("main-menu");
                     let heading = document.getElementById("heading");
                     heading.innerHTML = `<h1>XVAULT</h1><p>Choose Account</p>`;
-                    menu.innerHTML =    `<li><a href="#primary-act">Primary</a></li>
-                                        <li><a href="#exchange-act">Exchange</a></li>
-                                        <!--<li><a href="#mm-act">Money Market</a></li>
-                                        <li><a href="#margin-act">Margin</a></li>
-                                        <li><a href="#rewards-act">Rewards</a></li>-->
+                    menu.innerHTML =    `<li><a href="#wallet-view">Wallet</a></li>
+                                        <li><a href="#exchange-view">Exchange</a></li>
+                                        <!--<li><a href="#mm-view">Money Market</a></li>
+                                        <li><a href="#margin-view">Margin</a></li>
+                                        <li><a href="#rewards-view">Rewards</a></li>-->
                                         <li><a href="#settings-view">Settings</a></li>
                                         `;
                 }else{

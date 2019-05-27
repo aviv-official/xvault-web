@@ -1,6 +1,6 @@
 import {TelepathicElement} from "https://telepathic-elements.github.io/telepathic-element/telepathic-element.js";
 
-export default class PrimaryViewElement extends TelepathicElement{
+export default class WalletViewElement extends TelepathicElement{
     static describe(){return `An element to provide account info XVault.`};
 	constructor(fileName,noshadow,delayRender){
         super(fileName,noshadow,delayRender);
@@ -45,7 +45,7 @@ export default class PrimaryViewElement extends TelepathicElement{
         this.navGroup = this.$.querySelector("#nav-group");
         this.pageGroup = this.$.querySelector("#page-group").querySelectorAll("article");
         console.debug("navGroup: ",this.navGroup);
-        let btns = this.navGroup.querySelectorAll("button");
+        let btns = this.navGroup.querySelectorAll("a");
         console.debug("btns: ",btns);
         btns.forEach((btn)=>{
             console.debug("btn: ",btn);
