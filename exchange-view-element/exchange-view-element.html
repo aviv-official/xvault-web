@@ -1,10 +1,26 @@
-<div>
-    Sell: <select id="in-token-selector"></select><br>
-    Current: ${inSymbol} ${inTokenBal}<br>
-    <input id="amount-fld" type="number" placeholder="Amount to trade"><br>
-    Buy: <select id="out-token-selector"></select><br>
-    Current: ${outSymbol} ${outTokenBal}<br>
-    Exchange: ${outSymbol} ${outAmt}<br>
-    <button id="trade-btn">Trade</button><br>
-    <progress id="status-bar" max="100" value="${statusPct}"> ${statusPct}%</progress>
-</div>
+<link rel="stylesheet" href="./assets/css/main.css">
+<form>
+    <div class="fields">
+        <div class="field">
+            <label for="in-token-selector">Sell:</label>
+            <select id="in-token-selector"></select>
+        </div>
+        <span class="field">Current: ${inSymbol} ${inTokenBal}</span>
+        <div class="field">
+            <label for="amount-fld">Amount to Trade</label>
+            <input id="amount-fld" type="number" placeholder="Amount to trade">
+        </div>
+        <div class="field">
+            <label for="out-token-selector">Buy:</label>
+           <select id="out-token-selector"></select>
+        </div>
+    </div>
+    <div>
+        Current: ${outSymbol} ${outTokenBal}<br>
+        Exchange: ${outSymbol} ${outAmt}
+    </div>
+    <div class="actions">
+        <button id="trade-btn" class="primary">Trade</button>
+    </div>
+    <progress id="status-bar" max="100" value="${statusPct}" width="100%"> ${statusPct}%</progress>
+</form>

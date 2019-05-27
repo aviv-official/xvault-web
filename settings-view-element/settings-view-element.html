@@ -1,8 +1,14 @@
-<div>
-    <form id="pinform">
-        <label for="pinput">Input PIN To Proceed</label><br>
-        <input type="password" id="pinput"><button id="unlock-btn">UNLOCK</button>
-    </form>
-    <textarea value="${mnemonic}" cols="30" rows="8"></textarea>
-    <button id="lock-btn" width="100%">LOCK</button>
-</div>
+<link rel="stylesheet" href="./assets/css/main.css">
+<form id="pinform">
+    <div class="fields">
+        <div class="field">
+            <label for="pinput">Input PIN To Proceed</label>
+            <input type="password" id="pinput">
+            <button id="unlock-btn">UNLOCK</button>
+        </div>
+        <div class="field">
+            <textarea value="${mnemonic}" cols="30" rows="8" class="field"></textarea>
+            <button id="lock-btn" width="100%">LOCK</button>
+        </div>
+    </div>
+</form>

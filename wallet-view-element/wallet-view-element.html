@@ -16,20 +16,20 @@
         </p>
         <div><select id="token-selector"></select>${tokenBal}</div>
         <article id="send-funds-area" class="tabcontent">
-            <h2>&#x1F4E4;&nbsp;&nbsp;Send ${current_symbol}</h2>
+            <h2 class="major">&#x1F4E4;&nbsp;&nbsp;Send ${current_symbol}</h2>
             <send-view-element id="sendView"></send-view-element>
         </article>
         <article id="recv-funds-area" class="tabcontent">
-            <h2>&#x1F4E5;&nbsp;&nbsp;Receive ${current_symbol}</h2>
+            <h2 class="major">&#x1F4E5;&nbsp;&nbsp;Receive ${current_symbol}</h2>
             <h4>${address}</h4>
             <qr-code-element qrdata="${address}" id="address-btn"></qr-code-element>
         </article>
         <article id="reload-area" class="tabcontent" >
-            <h2>&#x1F4B0;&nbsp;&nbsp;Buy ${current_symbol}</h2>
+            <h2 class="major">&#x1F4B0;&nbsp;&nbsp;Buy ${current_symbol}</h2>
             <buy-view-element></buy-view-element>
         </article>
         <article id="burn-area" class="tabcontent" >
-            <h2 class="tooltip">&#x1F525;&nbsp;&nbsp;Burn ${current_symbol}<span class="tooltiptext">Burning tokens will convert them to XAV.  Burning XAV will convert it to wei</span></h2>
+            <h2 class="major tooltip">&#x1F525;&nbsp;&nbsp;Burn ${current_symbol}<span class="tooltiptext">Burning tokens will convert them to XAV.  Burning XAV will convert it to wei</span></h2>
             <burn-view-element></burn-view-element>
         </article>
     </div>
