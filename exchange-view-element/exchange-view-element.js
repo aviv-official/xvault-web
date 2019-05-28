@@ -15,6 +15,7 @@ export default class ExchangeViewElement extends TelepathicElement{
         this.outSymbol = "";
         this.inSymbol = "";
         this.statusPct = 0;
+        this.statusMsg = "";
     }
 
     static get observedAttributes() {
@@ -32,12 +33,16 @@ export default class ExchangeViewElement extends TelepathicElement{
         this.amount_fld.addEventListener("change",(evt)=>{this.onSelect(evt)});
         this.in_token_selector.addEventListener("change",(evt)=>{this.onSelect(evt)});
         this.out_token_selector.addEventListener("change",(evt)=>{this.onSelect(evt)});
-        
+        this.progress_area = this.$.querySelector("#progress-area");
+        this.progress_area.style.display = "none";
+        this.main_form = this.$.querySelector("#main-form");
         this.onSelect();
     }
 
     async onTrade(evt){
-        evt.preventDefault(); 
+        if(evt){
+            evt.preventDefault();
+        } 
         if(this.outAmt == 0){
             await this.onSelect(evt);
             window.setTimeout((evt)=>{this.onTrade(evt)},1000);
@@ -46,65 +51,107 @@ export default class ExchangeViewElement extends TelepathicElement{
         console.debug("onTrade: ",evt);
         this.statusPct = 10;
         if(window.confirm(`Would you like to exchange this ${this.inSymbol} ${this.amount_fld.value} for ${this.outSymbol} ${this.outAmt}`)){
-            console.debug("Customer confirmed!");
-            try{
-                let wallet = await window.app.pinPrompt();
-                this.statusPct++;
-                let params = {
-                    from: wallet[0].address
-                }
-                params.gas = await this.inToken.methods.approveAndCall(this.xchange.address, ""+this.inRaw, [0x0]).estimateGas(params);
-                console.debug("params: ",params);
-                this.statusPct++;
-                window.alert("Transfering funds to initiate exchange request");
-                let result = await this.inToken.methods.approveAndCall(this.xchange.address, ""+this.inRaw, [0x0]).send(params);
-                if(result){
-                    console.debug("result: ",result);
-                    this.statusPct = 25;
-                    delete params.gas;
-                    params.gas = await this.xchange.methods.swapTokens(""+this.inRaw, this.inToken.address, this.outToken.address).estimateGas(params);
-                    this.statusPct++;
-                    window.alert("Initiating exchange request");
-                    result = await this.xchange.methods.swapTokens(""+this.inRaw, this.inToken.address, this.outToken.address).send(params);
-                    window.alert("Exchange request completed");
-                    if(result){
-                        console.debug("result: ",result);
-                        this.statusPct = 50;
-                        delete params.gas;
-                        let amount = await this.xchange.methods.balanceOf(wallet[0].address, this.outToken.address).call(params);
-                        console.debug(`${this.outSymbol} ${amount}`);
-                        this.statusPct++;
-                        params.gas = await this.xchange.methods.withdraw(""+amount, this.outToken.address).estimateGas(params);
-                        window.alert("Withdrawing funds from exchange, depositing to Primary account");
-                        result = await this.xchange.methods.withdraw(""+amount, this.outToken.address).send(params);
-                        if(result){
-                            console.debug("result: ",result);
-                            this.statusPct = 75;
-                            delete params.gas;
-                            let allowance = await this.outToken.methods.allowance(this.xchange.address, wallet[0].address).call(params);
-                            console.debug("allowance: ",allowance);
-                            this.statusPct = 80;
-                            params.gas = await this.outToken.methods.transferFrom(this.xchange.address, wallet[0].address, ""+allowance).estimateGas(params);
-                            result = await this.outToken.methods.transferFrom(this.xchange.address, wallet[0].address, ""+allowance).send(params);
-                            if(result){
-                                console.debug("result: ",result);
-                                this.statusPct = 100;
-                                await this.onSelect(evt);
-                                window.setTimeout((evt)=>{
-                                    window.alert("Exchange complete!  Your balances will update shortly");
-                                    this.statusPct = 0;
-                                },5000);
-                            }
-                        }
-                    }
-                }
-            }catch(err){
-                console.error(err);
-                window.alert(err);
-            }
-
+            this.main_form.style.display = "none";
+            this.progress_area.style.display = "block";
+            this.handleStage1(evt);
         }else{
             this.statusPct = 0;
+        }
+    }
+
+    async handleStage1(evt){
+        try{
+            let wallet = await window.app.pinPrompt();
+            this.ctr = setInterval(()=>{
+                if(this.statusPct++ > 100){
+                    this.statusPct = 90;
+                }
+            },1000);
+            
+            let params = {
+                from: wallet[0].address
+            }
+            params.gas = await this.inToken.methods.approveAndCall(this.xchange.address, ""+this.inRaw, [0x0]).estimateGas(params);
+            console.debug("params: ",params);
+            this.statusPct++;
+            this.statusMsg = "Transfering funds to initiate exchange request";
+            let result = await this.inToken.methods.approveAndCall(this.xchange.address, ""+this.inRaw, [0x0]).send(params);
+            if(result){
+                console.debug("result: ",result);
+                this.handleStage2(evt,params,wallet);
+            }
+        }catch(err){
+            console.error(err);
+            window.alert(err);
+        }
+    }
+
+    async handleStage2(evt, params,wallet){
+        try{
+            this.statusPct = 25;
+            delete params.gas;
+            params.gas = await this.xchange.methods.swapTokens(""+this.inRaw, this.inToken.address, this.outToken.address).estimateGas(params);
+            this.statusPct++;
+            this.statusMsg = "Initiating exchange request";
+            let result = await this.xchange.methods.swapTokens(""+this.inRaw, this.inToken.address, this.outToken.address).send(params);
+            if(result){
+                console.debug("result: ",result);
+                this.statusMsg = "Exchange completed";
+                this.handleStage3(evt,params,wallet);
+            }
+        }catch(err){
+            console.error(err);
+            window.alert(err);
+        }
+    }
+
+    async handleStage3(evt,params,wallet){
+        try{
+            this.statusPct = 50;
+            delete params.gas;
+            let amount = await this.xchange.methods.balanceOf(wallet[0].address, this.outToken.address).call(params);
+            console.debug(`${this.outSymbol} ${amount}`);
+            this.statusPct++;
+            params.gas = await this.xchange.methods.withdraw(""+amount, this.outToken.address).estimateGas(params);
+            this.statusMsg = `Withdrawing ${this.outSymbol} from exchange`;
+            let result = await this.xchange.methods.withdraw(""+amount, this.outToken.address).send(params);
+            if(result){
+                console.debug("result: ",result);
+                this.handleFinalStage(evt,params,wallet);
+            }
+        }catch(err){
+            console.error(err);
+            window.alert(err);
+        }
+    }
+
+    async handleFinalStage(evt,params,wallet){
+        try{
+            this.statusPct = 75;
+            delete params.gas;
+            let allowance = await this.outToken.methods.allowance(this.xchange.address, wallet[0].address).call(params);
+            console.debug("allowance: ",allowance);
+            this.statusPct = 80;
+            params.gas = await this.outToken.methods.transferFrom(this.xchange.address, wallet[0].address, ""+allowance).estimateGas(params);
+            this.statusMsg=`Depositing ${this.outSymbol} to wallet`;
+            let result = await this.outToken.methods.transferFrom(this.xchange.address, wallet[0].address, ""+allowance).send(params);
+            if(result){
+                window.clearInterval(this.ctr);
+                console.debug("result: ",result);
+                this.statusPct = 100;
+                this.statusMsg = "All Done!";
+                window.setTimeout((evt)=>{
+                    window.alert("Exchange complete!  Your balances will update shortly");
+                    this.statusPct = 0;
+                    this.statusMsg = "";
+                    this.progress_area.style.display = "none";
+                    this.main_form.style.display = "block";
+                    this.onSelect(evt);
+                },1000);
+            }
+        }catch(err){
+            console.error(err);
+            window.alert(err);
         }
     }
     async onSelect(evt){

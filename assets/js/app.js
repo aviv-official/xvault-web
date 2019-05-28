@@ -108,13 +108,14 @@ export default class AppController{
         return await this.web3.eth.accounts.wallet.load(await this.pbkdf(pin));
     }
 
-    async pinPrompt(){
-        //Prompt for PIN to ensure decryption
-        let pin = prompt("Please Enter Your PIN To Continue");
-        window.alert("Decrypting wallet, this can take some time, please standby...");
-        let wallet = await this.decryptWallet(pin);
-        window.alert("Decryption complete!");
-        return wallet;
+    pinPrompt(){
+        return new Promise((resolve,reject)=>{
+            let pin = prompt("Please Enter Your PIN To Continue");
+            window.alert("Decrypting wallet, this can take some time, please standby...");
+            setTimeout(()=>{
+                resolve(this.decryptWallet(pin));
+            },500);
+        });
     }
 
     async connectInternal(){
@@ -281,7 +282,7 @@ export default class AppController{
     }
 
     async pbkdf(p){
-        window.alert("Calculating encryption key...");
+        await window.alert("Calculating encryption key...");
         return this.web3.utils.keccak256(this.web3.utils.bytesToHex(await crypto.pbkdf(""+p)));
     }
 
