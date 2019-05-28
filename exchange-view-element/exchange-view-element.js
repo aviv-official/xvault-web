@@ -110,9 +110,6 @@ export default class ExchangeViewElement extends TelepathicElement{
     async onSelect(evt){
         console.debug("onSelect: ",evt);
         if(!window.app.xchange){
-            window.setTimeout(()=>{
-                this.onSelect();
-            },1000);
             return;
         }else{
             console.debug("xchange: ",window.app.xchange);
@@ -149,18 +146,18 @@ export default class ExchangeViewElement extends TelepathicElement{
     }
 
     setSelectors(){
-        console.debug("this 1: ",this);
+        //console.debug("this 1: ",this);
         let last_in_token = localStorage["lastInToken"];
         let last_out_token = localStorage["lastOutToken"];
         let xtokens = window.app.XTokens;
         if(!xtokens){
             window.setTimeout(()=>{
                 this.setSelectors();
-            },1000);
+            },10000);
             return;
         }
         let keys = Object.getOwnPropertyNames(xtokens);
-        console.debug("this 2: ",this);
+        //console.debug("this 2: ",this);
         this.in_token_selector.innerHTML = "";
         this.out_token_selector.innerHTML = "";
         for(let key of keys){

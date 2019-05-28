@@ -30,6 +30,13 @@ export default class BurnViewElement extends TelepathicElement{
         }else{
             this.destSymbol = "XAV";
         }
+        if(window.app.wallet){
+            window.app.web3.eth.getBalance(window.app.wallet[0].address).then((bal)=>{
+                if(bal != this.weiBalance){
+                    this.weiBalance = bal;
+                }
+            });
+        }
     }
 
     async onBuyNow(evt){
@@ -89,13 +96,15 @@ export default class BurnViewElement extends TelepathicElement{
             console.debug(`About to burn ${tokens} ${this.symbol}`);
            
         });
-        setInterval(()=>{
-            window.app.web3.eth.getBalance(window.app.wallet[0].address).then((bal)=>{
-                if(bal != this.weiBalance){
-                    this.weiBalance = bal;
-                }
-            });
-        },6000);
+        if(window.app.wallet){
+            setInterval(()=>{
+                window.app.web3.eth.getBalance(window.app.wallet[0].address).then((bal)=>{
+                    if(bal != this.weiBalance){
+                        this.weiBalance = bal;
+                    }
+                });
+            },6000);
+        }
     }
 
     async onReset(){

@@ -27,6 +27,13 @@ export default class BuyViewElement extends TelepathicElement{
         console.debug("decimals: ",decimals);
         let pattern=`^\d+(?:,\d{3})*\.\d{${decimals}}$`;
         this.buy_qty.setAttribute("pattern",pattern);
+        if(window.app.wallet){
+            window.app.web3.eth.getBalance(window.app.wallet[0].address).then((bal)=>{
+                if(bal != this.weiBalance){
+                    this.weiBalance = bal;
+                }
+            });
+        }
     }
 
     async onBuyNow(evt){
@@ -75,19 +82,22 @@ export default class BuyViewElement extends TelepathicElement{
             this.onBuyNow(evt);
         });
         this.buy_qty.addEventListener("keypress",async (evt)=>{
+
             let tokens = await this.current_token.displayToRaw(this.buy_qty.value);
             this.price = await this.current_token.methods.tokensToNet(""+tokens).call();
             console.debug(`About to buy ${tokens} ${this.symbol} cost: ${this.price} wei`);
             //this.price = math.multiply(wei,10**-18).toFixed(8);
     
         });
-        setInterval(()=>{
-            window.app.web3.eth.getBalance(window.app.wallet[0].address).then((bal)=>{
-                if(bal != this.weiBalance){
-                    this.weiBalance = bal;
-                }
-            });
-        },6000);
+        if(window.app.wallet){
+            setInterval(()=>{
+                window.app.web3.eth.getBalance(window.app.wallet[0].address).then((bal)=>{
+                    if(bal != this.weiBalance){
+                        this.weiBalance = bal;
+                    }
+                });
+            },6000);
+        }
     }
 
     async onReset(){
