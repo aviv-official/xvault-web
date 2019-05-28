@@ -39,51 +39,50 @@ export default class BurnViewElement extends TelepathicElement{
         }
     }
 
-    async onBuyNow(evt){
-        console.debug("evt",evt);
-        console.debug("token: ",this.current_token);
-        let tokens = await this.current_token.displayToRaw(this.buy_qty.value);
-        console.debug("tokens: ",tokens);
-        let wei = await this.current_token.methods.tokensToNet(""+tokens).call();
-        console.debug(`About to buy ${tokens} ${this.symbol} cost: ${wei} wei`);
-        let eth = math.multiply(wei,10**-18).toFixed(8);
-        if(window.confirm(`Would you like to burn ${this.burn_qty.value} ${this.symbol}?`)){
-            try{
-                let wallet = await window.app.pinPrompt();
-                console.debug("ALERT: ",window.alert);
-                window.alert(`Burning ${this.buy_qty.value} ${this.symbol}`);
-                console.debug("wallet is ",wallet);
-                
-                let params = {
-                    value : wei,
-                    from : wallet[0].address
-                }
-
-                //TODO:  Burn cannot be used quite this way.  We need to transfer to XChange if the symbol is not XAV
-                //If we are trying to burn something not XAV we should direct the customer to the xchange view, or possibly run the exchange ourselves
-                //Either way the code is sitting in xchange
-
-                //params.gas = await this.current_token.methods.mint(wallet[0].address).estimateGas(params);
-                if(params.gas < 60000){
-                    params.gas = 60000;
-                }
-                console.debug("params: ", params);
-                
-                let result = await this.current_token.methods.mint(wallet[0].address).send(params);
-                console.debug(result);
-                window.alert("Transaction "+result.transactionHash+" completed successfully, your balances will update soon.");
-            }catch(err){
-                console.error(err);
-                window.alert("There was an error and your transaction could not be processed "+err);
-            }
-        }   
+    async burnNow(evt){
+        if(this.destSymbol == "XAV"){
+            this.swapToXAV(evt);
+        }else{
+            this.burnXAV(evt);
+        }
     }
 
+    async swapToXAV(evt){
+        this.xchangeView = document.querySelector("exchange-view-element");
+        this.xchangeView.in_token_selector.value = this.symbol;
+        this.xchangeView.out_token_selector.value = this.destSymbol;
+        this.xchangeView.amount_fld.value = this.burn_qty.value;
+        window.location.hash = "#exchange-view";
+        this.xchangeView.onTrade(evt);
+    }
+
+    async burnXAV(evt){
+        if(window.confirm(`Would you like to burn ${this.burn_qty.value} XAV to wei?`)){
+            try{
+                let wallet = await window.app.pinPrompt();
+                let xav = window.app.XTokens["XAV"];
+                let qty = await this.current_token.displayToRaw(this.burn_qty.value);
+                let params = {
+                    from: wallet[0].address
+                }
+                params.gas = await xav.methods.burn(""+qty).estimateGas(params);
+                window.alert(`Sending burn request...`);
+                let result = await xav.methods.burn(""+qty).send(params);
+                if(result){
+                    console.debug("result: ",result);
+                    window.alert("Burn complete!  Your balances will update shortly");
+                }
+            }catch(err){
+                console.debug(err);
+                window.alert(err);
+            }
+        }
+    }
     async onReady(){
         console.debug(`${this.constructor.name} is ready!`);
         this.burn_qty = this.$.querySelector("#burn-qty");
         this.burn_now_btn = this.$.querySelector("#burn-now-btn");
-        
+        this.burn_now_btn.addEventListener("click",async (evt)=>{this.burnNow(evt);})
         /*
         this.buy_now_btn.addEventListener('click',(evt)=>{
             console.debug("buy now pressed!",evt);

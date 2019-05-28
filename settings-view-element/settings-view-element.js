@@ -21,25 +21,27 @@ export default class SettingsViewElement extends TelepathicElement{
             await this.unlock(this.pinput.value);
             this.pinput.value = "";
         });
-        this.$.querySelector("#lock-btn").addEventListener("click",async (event)=>{
-            console.debug("lock-btn clicked!");
-            if(this.mnemonic !== this.newmonic){
-                if(window.confirm("Do you want to clear all settings and use the new account?")){
-                    let pin1 = window.prompt("Please enter your PIN");
-                    let pin2 = window.prompt("Please enter PIN for the second time");
-                    if(pin1 == pin2){
-                        await window.app.encryptMnemonic(this.mnemonic,pin1);
-                        return await window.app.postConnect();
-                    }
-                }
-            }else{
-                this.mnemonic = "";
-                event.preventDefault();
-                window.location = "./app.html";
-            }
-        });
+        this.$.querySelector("#lock-btn").addEventListener("click",async (event)=>{ this.onLock(event);});
     }
 
+    async onLock(evt){
+        console.debug("lock-btn clicked!");
+        if(this.mnemonic !== this.newmonic){
+            if(window.confirm("Do you want to clear all settings and use the new account?")){
+                let pin1 = window.prompt("Please enter your PIN");
+                let pin2 = window.prompt("Please enter PIN for the second time");
+                if(pin1 == pin2){
+                    await window.app.encryptMnemonic(this.mnemonic,pin1);
+                    return await window.app.postConnect();
+                }
+            }
+        }else{
+            this.mnemonic = "";
+            event.preventDefault();
+            window.location = "./app.html";
+        }
+    }
+    
     async unlock(pin){
         await window.alert("Unlocking account, please wait...");
         this.mnemonic = await window.app.decryptMnemonic(pin);

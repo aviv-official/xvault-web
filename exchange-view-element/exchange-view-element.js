@@ -78,7 +78,7 @@ export default class ExchangeViewElement extends TelepathicElement{
             let result = await this.inToken.methods.approveAndCall(this.xchange.address, ""+this.inRaw, [0x0]).send(params);
             if(result){
                 console.debug("result: ",result);
-                this.handleStage2(evt,params,wallet);
+                return this.handleStage2(evt,params,wallet);
             }
         }catch(err){
             console.error(err);
@@ -97,7 +97,7 @@ export default class ExchangeViewElement extends TelepathicElement{
             if(result){
                 console.debug("result: ",result);
                 this.statusMsg = "Exchange completed";
-                this.handleStage3(evt,params,wallet);
+                return this.handleStage3(evt,params,wallet);
             }
         }catch(err){
             console.error(err);
@@ -117,7 +117,7 @@ export default class ExchangeViewElement extends TelepathicElement{
             let result = await this.xchange.methods.withdraw(""+amount, this.outToken.address).send(params);
             if(result){
                 console.debug("result: ",result);
-                this.handleFinalStage(evt,params,wallet);
+                return this.handleFinalStage(evt,params,wallet);
             }
         }catch(err){
             console.error(err);

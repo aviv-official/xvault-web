@@ -104,7 +104,6 @@ export default class AppController{
     }
 
     async decryptWallet(pin){
-
         return await this.web3.eth.accounts.wallet.load(await this.pbkdf(pin));
     }
 
