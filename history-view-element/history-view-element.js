@@ -3,7 +3,7 @@ export default class HistoryViewElement extends TelepathicElement{
     static describe(){return `An element for viewing account history.`};
     constructor(fileName,noshadow,delayRender){
         super(fileName,noshadow,delayRender);
-        this.history = document.createElement("ul");
+        this.history = document.createElement("ol");
     }
 
     async onReady(){
@@ -12,7 +12,7 @@ export default class HistoryViewElement extends TelepathicElement{
             data = JSON.parse(localStorage["history"]);
             if(data.length > 2){
                 data.sort((a,b)=>{
-                    return a.blockNumber - b.blockNumber;
+                    return b.blockNumber - a.blockNumber;
                 });
             }
             console.debug("sorted history: ",data);
@@ -22,7 +22,7 @@ export default class HistoryViewElement extends TelepathicElement{
                 if(addr == "0x0000000000000000000000000000000000000000"){
                     addr = item.contract;
                 }
-                el.innerHTML = `<a href="https://rinkeby.etherscan.io/tx/${item.transactionHash}" target="new">${item.symbol}&nbsp;${item.tokens}</a>`;
+                el.innerHTML = `<a href="https://rinkeby.etherscan.io/tx/${item.transactionHash}" target="new">${item.tokens}&nbsp;${item.symbol}</a>`;
                 
                 this.history.appendChild(el);
             });
