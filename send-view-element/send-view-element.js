@@ -10,6 +10,7 @@ export default class SendViewElement extends TelepathicElement{
         this.isCameraOpen = false;
         window.sendView = this;
         this.a=new AudioContext();
+        this.memo = "";
     }
 
     beep(vol, freq, duration){
@@ -42,7 +43,8 @@ export default class SendViewElement extends TelepathicElement{
         evt.preventDefault();
         let amount = this.destAmt;
         let destAddr = this.destAddr;
-        this.parent.sendCB(destAddr,amount);
+        let memo = this.memo
+        this.parent.sendCB(destAddr,amount,memo);
     }
 
     async toggleCamera(evt){

@@ -9,6 +9,7 @@ export default class AppController{
             let data = await (await fetch("/xvault-web/assets/js/web3-1.0.0-beta.37.min.js")).text();
             await eval(data);
             this.web3 = new Web3();
+            this.wss3 = new Web3();
             let promises = [];
             promises.push(this.fetchJSON("xtokenAddrs", "/xvault-web/assets/json/xtoken/xtoken.deployment.json"));
             promises.push(this.fetchJSON("xtokenABI","/xvault-web/assets/json/xtoken/xtoken.abi.json"));
@@ -79,7 +80,6 @@ export default class AppController{
                     element.setAttribute("network",network_id);
                 });
             }
-
             if(oldAddr != addr){
                 console.debug("addr changed");
                 localStorage["selectedAddress"] = addr;
@@ -94,11 +94,12 @@ export default class AppController{
             clearInterval(this.pollTimer);
         }
     }
+
     postConnect(){
         console.debug("Connected! ",this.web3);
         delete localStorage["selectedAddress"];
         delete localStorage["network_id"];
-        this.pollTimer = setInterval(async ()=>{this.onPoll();},30000);
+        this.pollTimer = setInterval(async ()=>{this.onPoll();},60000);
         this.onPoll();
         return true;
     }
@@ -121,14 +122,13 @@ export default class AppController{
         let provider;
         for(let obj of this.chains){
             if(obj.network == "rinkeby"){
-                provider = obj.rpc[0];
+                provider = obj.wss[0];
                 break;
             }
         }
         this.web3.setProvider(provider);
         //Detect if there is a stored wallet
         if(localStorage["web3js_wallet"]){
-            //Prompt for PIN to ensure decryption
             this.wallet = JSON.parse(localStorage["web3js_wallet"]);
             if(!localStorage["selectedAddress"]){
                 localStorage["selectedAddress"] = this.wallet[0].address;
@@ -145,6 +145,9 @@ export default class AppController{
                 }catch(err){
                     console.debug(err);
                 }
+            }else{
+                window.alert("PIN Mismatch!  Please try again!");
+                return await this.connectInternal();
             }
         }
         return false;
@@ -157,17 +160,21 @@ export default class AppController{
     async loadContracts(){
         await this.loadTokens();
     }
+
     async loadTokens(){
         this.xtokens = {};
         let network = localStorage["network_id"];
         this.xchange = await new this.Web3.eth.Contract(this.xchangeABI,this.xchangeAddrs[network]);
         this.xchange.address = this.xchangeAddrs[network];
         let contracts = this.xtokenAddrs[network];
+        
         for(let contract of contracts){
             let keys = Object.getOwnPropertyNames(contract);
             try{
                 let ctr = await new this.Web3.eth.Contract(this.xtokenABI,contract[keys[0]]);
                 ctr.address = contract[keys[0]];
+                ctr.events.Approval(null,(error,event)=>{this.onApprovalEvent(error,event);});
+                ctr.events.Transfer(null,(error,event)=>{this.onTransferEvent(error,event);});
                 ctr.rawToDisplay = async function(val){
                     let dec = await this.methods.decimals().call();
                     //console.debug(`val: ${val} : decimals ${dec}`);
@@ -198,6 +205,39 @@ export default class AppController{
             }
         }
         console.debug("xtokens: ",this.xtokens);
+        let lastBlock = localStorage["lastBlock"];
+        lastBlock = lastBlock == "" ? null : lastBlock;
+
+    }
+
+    async onApprovalEvent(error,data){
+        if(error){
+            console.error(error);
+        }else{
+            
+            let obj = data.returnValues;
+            obj.blockNumber = data.blockNumber;
+            obj.transactionHash = data.transactionHash;
+            delete obj[0];
+            delete obj[1];
+            delete obj[2];
+            console.debug("An Approval: ",obj);
+            console.debug("typeof owner: ", (typeof obj.owner));
+            if(obj.owner.toLowerCase().includes(this.wallet[0].address) || obj.spender.toLowerCase().includes(this.wallet[0].address)){
+                console.debug("My Approval: ",obj);
+            }else{
+                console.debug("Someone else's Approval: ",obj);
+            }
+            console.debug("wallet: ",this.wallet);
+        }
+    }
+
+    async onTransferEvent(error,data){
+        if(error){
+            console.error(error);
+        }else{
+            console.debug("Transfer: ",data);
+        }
     }
 
     async setDefaults(addr){
@@ -229,21 +269,35 @@ export default class AppController{
         return this.xtokens;
     }
 
-    async sendCB(symbol, dest, amount){
+    async approveAndCall(params,token, dest, amount, memo){
+        params.gas = await token.methods.approveAndCall(dest,amount,memo).estimateGas(params);
+        return await token.methods.approveAndCall(dest,amount,memo).send(params);
+    }
+
+    async transfer(params,token, dest, amount){
+        params.gas = await token.methods.transfer(dest,amount).estimateGas(params);
+        console.debug("params: ",params);
+        result = await ctr.methods.transfer(dest,fin).send(params);
+        console.debug("result: ",result);
+        return result;
+    }
+
+    async sendCB(symbol, dest, amount, memo){
         let result;
         if(window.confirm(`Would you like to send ${amount} ${symbol} to ${dest}?`)){
             try{
-                
-                let ctr = await this.XTokens[symbol];
-                let fin = (await ctr.displayToRaw(amount)).toString();
                 let wallet = await this.pinPrompt();
-                let params = {
-                    from : wallet[0].address
+                let token = await this.XTokens[symbol];
+                let net = (await token.displayToRaw(amount)).toString();
+                params = {
+                    from: wallet[0].address
                 }
-                params.gas = await ctr.methods.transfer(dest,fin).estimateGas(params);
-                console.debug("params: ",params);
                 window.alert("Initiating Transfer");
-                result = await ctr.methods.transfer(dest,fin).send(params);
+                if(memo !==""){
+                    result = await this.approveAndCall(params,token,dest,net,memo);
+                }else{
+                    result = await this.transfer(params,token,dest,net);
+                }
                 console.debug("result: ",result);
                 window.alert(`Successfully sent ${amount} ${symbol} to ${dest}! Transaction Hash is ${result.transactionHash}`);
             }catch(err){

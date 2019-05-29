@@ -38,6 +38,9 @@
       "rpc": [
         "https://rinkeby.infura.io/v3/ddea2ef76ff547888382c9feb3d15792"
       ],
+      "wss":[
+        "wss://rinkeby.infura.io/ws/v3/ddea2ef76ff547888382c9feb3d15792"
+      ],
       "faucets": [
         "https://faucet.rinkeby.io"
       ],

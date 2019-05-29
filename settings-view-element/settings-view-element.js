@@ -22,6 +22,7 @@ export default class SettingsViewElement extends TelepathicElement{
             this.pinput.value = "";
         });
         this.$.querySelector("#lock-btn").addEventListener("click",async (event)=>{ this.onLock(event);});
+        this.$.querySelector("#export-btn").addEventListener("click",(evt)=>{this.exportWallet(evt);});
     }
 
     async onLock(evt){
@@ -46,5 +47,20 @@ export default class SettingsViewElement extends TelepathicElement{
         await window.alert("Unlocking account, please wait...");
         this.mnemonic = await window.app.decryptMnemonic(pin);
         this.newmonic = this.mnemonic;
+    }
+
+    async exportWallet(evt){
+        evt.preventDefault();
+        if(window.confirm("Would you like to export your wallet?")){
+            let filename = "xvault.wallet.encrypted.json";
+            let text = localStorage["web3js_wallet"];
+            let element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+            element.setAttribute('download', filename);
+            element.setAttribute('target', "new");
+            this.appendChild(element);
+            element.click();
+            this.removeChild(element);
+        }
     }
 }
