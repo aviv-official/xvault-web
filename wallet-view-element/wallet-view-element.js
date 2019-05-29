@@ -161,10 +161,22 @@ export default class WalletViewElement extends TelepathicElement{
         if(this.address !== "unset"){
             try{
                 console.debug("Checking stats!");
-                window.app.web3.eth.getBalance(this.address).then((bal)=>{
+                window.app.web3.eth.getBalance(this.address).then(async (bal)=>{
                     if(bal != this.weiBalance){
                         this.weiBalance = bal;
-                        window.alert(`Your wei balance is now ${this.weiBalance}`);
+                        if(this.web3.utils.toWei(this.weiBalance, "milli") > 1){
+                            if(window.confirm(`You have excessive gas! Use it to buy XTokens?`)){
+                                window.location.hash = "#wallet-view";
+                                this.token_selector= this.$.querySelector("#token-selector");
+                                this.token_selector.value = "ETH";
+                                this.onTokenChange();
+                                let btn = this.$.querySelector("#reload-btn");
+                                btn.click();                        
+
+                            }
+                        }else{
+                            window.alert(`Your gas balance is now ${this.weiBalance}`);
+                        }
                     }
                 });
                 
