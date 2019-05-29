@@ -23,8 +23,16 @@ export default class SettingsViewElement extends TelepathicElement{
         });
         this.$.querySelector("#lock-btn").addEventListener("click",async (event)=>{ this.onLock(event);});
         this.$.querySelector("#export-btn").addEventListener("click",(evt)=>{this.exportWallet(evt);});
+        this.$.querySelector("#reset-btn").addEventListener("click",(evt)=>{this.onResetEvent(evt);});
     }
 
+    async onResetEvent(evt){
+        evt.preventDefault();
+        if(window.confirm("Do you really want to erase your account and reset the app to it's default settings?")){
+            await localStorage.clear();
+            window.location = "./index.html";
+        }
+    }
     async onLock(evt){
         console.debug("lock-btn clicked!");
         if(this.mnemonic !== this.newmonic){
