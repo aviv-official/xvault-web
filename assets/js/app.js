@@ -3,6 +3,18 @@ import {BASE16,BASE64,convert} from "./basecvt.js";
 
 export default class AppController{
     constructor(){
+        if(localStorage["history"]){
+            this.history = JSON.parse(localStorage["history"]);
+        }else{
+            this.history = [];
+        }
+
+        if(localStorage["allowances"]){
+            this.allowances = JSON.parse(localStorage["allowances"]);
+        }else{
+            this.allowances = [];
+        }
+
         window.alert = window.toastr.info;
         window.alert("Loading resources please wait...");
         setTimeout(async()=>{
@@ -173,8 +185,8 @@ export default class AppController{
             try{
                 let ctr = await new this.Web3.eth.Contract(this.xtokenABI,contract[keys[0]]);
                 ctr.address = contract[keys[0]];
-                ctr.events.Approval(null,(error,event)=>{this.onApprovalEvent(error,event);});
-                ctr.events.Transfer(null,(error,event)=>{this.onTransferEvent(error,event);});
+                ctr.events.Approval(null,(error,event)=>{this.onApprovalEvent(error,event,ctr);});
+                ctr.events.Transfer(null,(error,event)=>{this.onTransferEvent(error,event,ctr);});
                 ctr.rawToDisplay = async function(val){
                     let dec = await this.methods.decimals().call();
                     //console.debug(`val: ${val} : decimals ${dec}`);
@@ -210,7 +222,7 @@ export default class AppController{
 
     }
 
-    async onApprovalEvent(error,data){
+    async onApprovalEvent(error,data,contract){
         if(error){
             console.error(error);
         }else{
@@ -218,13 +230,16 @@ export default class AppController{
             let obj = data.returnValues;
             obj.blockNumber = data.blockNumber;
             obj.transactionHash = data.transactionHash;
+            obj.contract = contract;
             delete obj[0];
             delete obj[1];
             delete obj[2];
             console.debug("An Approval: ",obj);
-            console.debug("typeof owner: ", (typeof obj.owner));
+            
             if(obj.owner.toLowerCase().includes(this.wallet[0].address) || obj.spender.toLowerCase().includes(this.wallet[0].address)){
                 console.debug("My Approval: ",obj);
+                this.allowances.push(obj);
+                localStorage["allowances"] = JSON.stringify(allowances);
             }else{
                 console.debug("Someone else's Approval: ",obj);
             }
@@ -232,11 +247,29 @@ export default class AppController{
         }
     }
 
-    async onTransferEvent(error,data){
+    async onTransferEvent(error,data,contract){
         if(error){
             console.error(error);
         }else{
-            console.debug("Transfer: ",data);
+            console.debug("Raw Transfer: ",data);
+            let obj = data.returnValues;
+            obj.blockNumber = data.blockNumber;
+            obj.transactionHash = data.transactionHash;
+            obj.contract = contract.address;
+            obj.symbol = await contract.methods.symbol().call();
+            obj.tokens = await contract.rawToDisplay(obj.value);
+
+            delete obj[0];
+            delete obj[1];
+            delete obj[2];
+            if(obj.from.toLowerCase().includes(this.wallet[0].address) || obj.to.toLowerCase().includes(this.wallet[0].address)){
+                console.debug("My Transfer: ",obj);
+                this.history.push(obj);
+                localStorage["history"] = JSON.stringify(this.history);
+            }else{
+                console.debug("Someone else's transfer: ",obj);
+            }
+
         }
     }
 
