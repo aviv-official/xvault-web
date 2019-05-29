@@ -37,6 +37,7 @@ export default class SettingsViewElement extends TelepathicElement{
         console.debug("lock-btn clicked!");
         if(this.mnemonic !== this.newmonic){
             if(window.confirm("Do you want to clear all settings and use the new account?")){
+                localStorage.clear();
                 let pin1 = window.prompt("Please enter your PIN");
                 let pin2 = window.prompt("Please enter PIN for the second time");
                 if(pin1 == pin2){
@@ -46,7 +47,7 @@ export default class SettingsViewElement extends TelepathicElement{
             }
         }else{
             this.mnemonic = "";
-            event.preventDefault();
+            evt.preventDefault();
             window.location = "./app.html";
         }
     }
