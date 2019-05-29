@@ -165,7 +165,7 @@ export default class WalletViewElement extends TelepathicElement{
                     if(bal != this.weiBalance){
                         this.weiBalance = bal;
                         if(this.web3.utils.toWei(this.weiBalance, "milli") > 1){
-                            if(window.confirm(`You have excessive gas! Use it to buy XTokens?`)){
+                            if(window.confirm(`You have a lot of excess gas! Buy some XTokens?`)){
                                 window.location.hash = "#wallet-view";
                                 this.token_selector= this.$.querySelector("#token-selector");
                                 this.token_selector.value = "ETH";
