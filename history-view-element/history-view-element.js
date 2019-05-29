@@ -10,7 +10,7 @@ export default class HistoryViewElement extends TelepathicElement{
         let data;
         if(localStorage["history"]){
             data = JSON.parse(localStorage["history"]);
-            if(data.length > 2){
+            if(data.length > 1){
                 data.sort((a,b)=>{
                     return b.blockNumber - a.blockNumber;
                 });
