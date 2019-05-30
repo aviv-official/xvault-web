@@ -18,11 +18,12 @@ export default class HistoryViewElement extends TelepathicElement{
             console.debug("sorted history: ",data);
             data.forEach(item => {
                 let el = document.createElement("li");
+                let type = item.from == localStorage["selectedAddress"] ? "-" : "+";
                 let addr = item.from == localStorage["selectedAddress"] ? item.to : item.from;
                 if(addr == "0x0000000000000000000000000000000000000000"){
                     addr = item.contract;
                 }
-                el.innerHTML = `<a href="https://rinkeby.etherscan.io/tx/${item.transactionHash}" target="new">${item.tokens}&nbsp;${item.symbol}</a>`;
+                el.innerHTML = `<a href="https://rinkeby.etherscan.io/tx/${item.transactionHash}" target="new">${type}${item.tokens}&nbsp;${item.symbol}</a>`;
                 
                 this.history.appendChild(el);
             });
