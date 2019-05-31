@@ -26,8 +26,8 @@ export default class WalletViewElement extends TelepathicElement{
         }
     }
 
-    async sendCB(dest,amount){
-        app.sendCB(this.current_symbol,dest,amount);
+    async sendCB(dest,amount,memo){
+        app.sendCB(this.current_symbol,dest,amount,memo);
     }
     async onReady(){
         console.warn(`${this.constructor.name} entering onReady!`);  

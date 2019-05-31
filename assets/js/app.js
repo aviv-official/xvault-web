@@ -329,6 +329,7 @@ export default class AppController{
     }
 
     async approveAndCall(params,token, dest, amount, memo){
+        console.debug("memo: ",memo);
         params.gas = await token.methods.approveAndCall(dest,amount,memo).estimateGas(params);
         return await token.methods.approveAndCall(dest,amount,memo).send(params);
     }
@@ -342,17 +343,19 @@ export default class AppController{
     }
 
     async sendCB(symbol, dest, amount, memo){
+        console.debug("memo in sendCB: ",memo);
         let result;
         if(window.confirm(`Would you like to send ${amount} ${symbol} to ${dest}?`)){
             try{
                 let wallet = await this.pinPrompt();
                 let token = await this.XTokens[symbol];
                 let net = (await token.displayToRaw(amount)).toString();
-                params = {
+                let params = {
                     from: wallet[0].address
                 }
                 window.alert("Initiating Transfer");
                 if(memo !==""){
+                    memo = new TextEncoder("utf-8").encode(memo);
                     result = await this.approveAndCall(params,token,dest,net,memo);
                 }else{
                     result = await this.transfer(params,token,dest,net);
@@ -360,6 +363,7 @@ export default class AppController{
                 console.debug("result: ",result);
                 window.alert(`Successfully sent ${amount} ${symbol} to ${dest}! Transaction Hash is ${result.transactionHash}`);
             }catch(err){
+                console.error(err);
                 window.alert(err);
             }
         }

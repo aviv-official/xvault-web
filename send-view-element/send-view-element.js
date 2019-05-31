@@ -7,10 +7,11 @@ export default class SendViewElement extends TelepathicElement{
         QrScanner.WORKER_PATH = '/xvault-web/assets/js/qr-scanner-worker.min.js';
         this.destAddr = "";
         this.destAmt = "";
+        this.memo = "";
         this.isCameraOpen = false;
         window.sendView = this;
         this.a=new AudioContext();
-        this.memo = "";
+        
     }
 
     beep(vol, freq, duration){
@@ -43,7 +44,7 @@ export default class SendViewElement extends TelepathicElement{
         evt.preventDefault();
         let amount = this.destAmt;
         let destAddr = this.destAddr;
-        let memo = this.memo
+        let memo = this.memo;
         this.parent.sendCB(destAddr,amount,memo);
     }
 
