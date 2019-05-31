@@ -107,9 +107,11 @@ export default class WalletViewElement extends TelepathicElement{
             this.current_token = window.app.XTokens[this.token_selector.value];
             if(window.app.currentAddress){
                 console.debug("current address: ",window.app.currentAddress);
+                window.app.fetchHistory(this.current_symbol);
                 this.tokenBal = await this.current_token.balanceDisplay(window.app.currentAddress);
                 this.$.querySelector("buy-view-element").setAttribute("symbol",this.current_symbol);
-                this.$.querySelector("burn-view-element").setAttribute("symbol",this.current_symbol);            
+                this.$.querySelector("burn-view-element").setAttribute("symbol",this.current_symbol);
+                this.$.querySelector("history-view-element").setAttribute("symbol",this.current_symbol);            
             }
         }catch(err){
             console.debug(err);

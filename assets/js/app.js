@@ -3,6 +3,8 @@ import {BASE16,BASE64,convert} from "./basecvt.js";
 
 export default class AppController{
     constructor(){
+        
+        /*
         if(localStorage["history"]){
             this.history = JSON.parse(localStorage["history"]);
         }else{
@@ -14,9 +16,19 @@ export default class AppController{
         }else{
             this.allowances = [];
         }
-
+        */
         window.alert = window.toastr.info;
         window.alert("Loading resources please wait...");
+        this.history = new Worker("/xvault-web/assets/js/history-worker.js");
+        this.history.onmessage = (msg)=>{ 
+            console.debug("msg from history worker: ",msg);
+            this.history[msg.data.value] = msg.data.result;
+         }
+        this.allowances = new Worker("/xvault-web/assets/js/allowance-worker.js");
+        
+        console.debug("history: ",this.history);
+        console.debug("allowances: ",this.allowances);
+
         setTimeout(async()=>{
             let data = await (await fetch("/xvault-web/assets/js/web3-1.0.0-beta.37.min.js")).text();
             await eval(data);
@@ -179,7 +191,12 @@ export default class AppController{
         this.xchange = await new this.Web3.eth.Contract(this.xchangeABI,this.xchangeAddrs[network]);
         this.xchange.address = this.xchangeAddrs[network];
         let contracts = this.xtokenAddrs[network];
-        
+        let fromBlock = 0;
+        if(localStorage["lastBlock"]){
+            fromBlock = localStorage["lastBlock"];
+        }else{
+            localStorage["lastBlock"] = fromBlock;
+        }
         for(let contract of contracts){
             let keys = Object.getOwnPropertyNames(contract);
             try{
@@ -187,6 +204,8 @@ export default class AppController{
                 ctr.address = contract[keys[0]];
                 ctr.events.Approval(null,(error,event)=>{this.onApprovalEvent(error,event,ctr);});
                 ctr.events.Transfer(null,(error,event)=>{this.onTransferEvent(error,event,ctr);});
+                ctr.getPastEvents("Transfer", {fromBlock: fromBlock,toBlock: 'latest'},(error,event)=>{this.onTransferEvent(error,event,ctr);});
+                ctr.getPastEvents("Approval", {fromBlock: fromBlock,toBlock: 'latest'},(error,event)=>{this.onApprovalEvent(error,event,ctr);});
                 ctr.rawToDisplay = async function(val){
                     let dec = await this.methods.decimals().call();
                     //console.debug(`val: ${val} : decimals ${dec}`);
@@ -222,54 +241,58 @@ export default class AppController{
 
     }
 
+    async processApprovalEvent(data,contract){
+        data.owner = data.returnValues.owner;
+        data.spender = data.returnValues.spender;
+        if(data.owner !== undefined && data.spender !== undefined){
+            if(data.owner.toLowerCase().includes(this.wallet[0].address) || data.spender.toLowerCase().includes(this.wallet[0].address)){
+                data.value = data.returnValues.value;
+                data.tokens = await contract.rawToDisplay(data.value);
+                data.symbol = await contract.methods.symbol().call();
+                delete data.returnValues;
+                delete data.raw;
+                this.allowances.postMessage(data);
+            }
+        }
+        
+    }
     async onApprovalEvent(error,data,contract){
         if(error){
             console.error(error);
         }else{
-            
-            let obj = data.returnValues;
-            obj.blockNumber = data.blockNumber;
-            obj.transactionHash = data.transactionHash;
-            obj.contract = contract;
-            delete obj[0];
-            delete obj[1];
-            delete obj[2];
-            console.debug("An Approval: ",obj);
-            
-            if(obj.owner.toLowerCase().includes(this.wallet[0].address) || obj.spender.toLowerCase().includes(this.wallet[0].address)){
-                console.debug("My Approval: ",obj);
-                this.allowances.push(obj);
-                localStorage["allowances"] = JSON.stringify(allowances);
+            if(Array.isArray(data)){
+                data.forEach((item)=>{ this.processApprovalEvent(item,contract);});
             }else{
-                console.debug("Someone else's Approval: ",obj);
+                this.processApprovalEvent(data,contract);
             }
-            console.debug("wallet: ",this.wallet);
+        }
+    }
+
+    async processTransferEvent(data,contract){
+        data.from = data.returnValues.from;
+        data.to = data.returnValues.to;
+        if(data.from !== undefined && data.to !== undefined){
+            if(data.from.toLowerCase().includes(this.wallet[0].address) || data.to.toLowerCase().includes(this.wallet[0].address)){
+                data.value = data.returnValues.value;
+                data.tokens = await contract.rawToDisplay(data.value);
+                data.symbol = await contract.methods.symbol().call();
+                delete data.returnValues;
+                delete data.raw;
+                this.history.postMessage(data);
+            }
         }
     }
 
     async onTransferEvent(error,data,contract){
+        
         if(error){
             console.error(error);
         }else{
-            console.debug("Raw Transfer: ",data);
-            let obj = data.returnValues;
-            obj.blockNumber = data.blockNumber;
-            obj.transactionHash = data.transactionHash;
-            obj.contract = contract.address;
-            obj.symbol = await contract.methods.symbol().call();
-            obj.tokens = await contract.rawToDisplay(obj.value);
-
-            delete obj[0];
-            delete obj[1];
-            delete obj[2];
-            if(obj.from.toLowerCase().includes(this.wallet[0].address) || obj.to.toLowerCase().includes(this.wallet[0].address)){
-                console.debug("My Transfer: ",obj);
-                this.history.push(obj);
-                localStorage["history"] = JSON.stringify(this.history);
+            if(Array.isArray(data)){
+                data.forEach((item)=>{ this.processTransferEvent(item,contract);});
             }else{
-                console.debug("Someone else's transfer: ",obj);
+                this.processTransferEvent(data,contract);
             }
-
         }
     }
 
@@ -371,6 +394,17 @@ export default class AppController{
     async pbkdf(p){
         await window.alert("Calculating encryption key...");
         return this.web3.utils.keccak256(this.web3.utils.bytesToHex(await crypto.pbkdf(""+p)));
+    }
+
+    fetchHistory(symbol){
+        if(!this.history[symbol]){
+            this.history[symbol] = [];
+        }
+        this.history.postMessage({query : {key : "symbol",value : symbol}});
+    }
+
+    getHistory(symbol){
+        return this.history[symbol];
     }
 
 }
