@@ -206,6 +206,7 @@ export default class AppController{
                 ctr.events.Transfer(null,(error,event)=>{this.onTransferEvent(error,event,ctr);});
                 ctr.getPastEvents("Transfer", {fromBlock: fromBlock,toBlock: 'latest'},(error,event)=>{this.onTransferEvent(error,event,ctr);});
                 ctr.getPastEvents("Approval", {fromBlock: fromBlock,toBlock: 'latest'},(error,event)=>{this.onApprovalEvent(error,event,ctr);});
+                this.fetchHistory(keys[0]);
                 ctr.rawToDisplay = async function(val){
                     let dec = await this.methods.decimals().call();
                     //console.debug(`val: ${val} : decimals ${dec}`);
