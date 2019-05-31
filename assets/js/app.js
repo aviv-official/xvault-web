@@ -209,7 +209,6 @@ export default class AppController{
                 this.fetchHistory(keys[0]);
                 ctr.rawToDisplay = async function(val){
                     let dec = await this.methods.decimals().call();
-                    //console.debug(`val: ${val} : decimals ${dec}`);
                     if(val != 0){
                         return math.multiply(val,math.pow(10,0-dec)).toFixed(dec);
                     }else{
@@ -281,6 +280,9 @@ export default class AppController{
                 delete data.raw;
                 this.history.postMessage(data);
             }
+        }
+        if(data.blockNumber > localStorage["lastBlock"]){
+            localStorage["lastBlock"] = data.blockNumber;
         }
     }
 
