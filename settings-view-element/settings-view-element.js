@@ -24,31 +24,64 @@ export default class SettingsViewElement extends TelepathicElement{
         this.$.querySelector("#lock-btn").addEventListener("click",async (event)=>{ this.onLock(event);});
         this.$.querySelector("#export-btn").addEventListener("click",(evt)=>{this.exportWallet(evt);});
         this.$.querySelector("#reset-btn").addEventListener("click",(evt)=>{this.onResetEvent(evt);});
+        this.$.querySelector('#generate-btn').addEventListener("click",(evt)=>{this.onGenerateEvent(evt);});
+        if(!localStorage["web3js_wallet"]){
+            this.$.querySelector("#pin-area").style.display = "none";
+            this.$.querySelector("#unlock-btn").style.display = "none";
+            this.$.querySelector("#export-btn").style.display = "none";
+        }
     }
 
+    async onGenerateEvent(evt){
+        evt.preventDefault();
+        this.mnemonic = await app.randomMnemonic();
+    }
     async onResetEvent(evt){
         evt.preventDefault();
         if(window.confirm("Do you really want to erase your account and reset the app to it's default settings?")){
             await localStorage.clear();
-            window.location = "./index.html";
+            await indexedDB.deleteDatabase("history");
+            await indexedDB.deleteDatabase("allowances");
+            setTimeout(()=>{
+                window.location.hash = "";
+                setTimeout(()=>{
+                    window.location.reload(true);
+                },100);
+            },500);
         }
     }
+    
     async onLock(evt){
+        evt.preventDefault();
         console.debug("lock-btn clicked!");
-        if(this.mnemonic !== this.newmonic){
+        if(this.mnemonic.length > 10 && this.mnemonic !== this.newmonic){
             if(window.confirm("Do you want to clear all settings and use the new account?")){
                 localStorage.clear();
+                await indexedDB.deleteDatabase("history");
+                await indexedDB.deleteDatabase("allowances");
                 let pin1 = window.prompt("Please enter your PIN");
                 let pin2 = window.prompt("Please enter PIN for the second time");
                 if(pin1 == pin2){
                     await window.app.encryptMnemonic(this.mnemonic,pin1);
-                    return await window.app.postConnect();
+                    setTimeout(()=>{
+                        window.location.hash = "";
+                        setTimeout(()=>{
+                            window.location.reload(true);
+                        },100);
+                    },500);
+                }else{
+                    this.onResetEvent(evt);
                 }
             }
         }else{
             this.mnemonic = "";
-            evt.preventDefault();
-            window.location = "./app.html";
+            this.pinput.value = "";
+            setTimeout(()=>{
+                window.location.hash = "";
+                setTimeout(()=>{
+                    window.location.reload(true);
+                },100);
+            },500);
         }
     }
     

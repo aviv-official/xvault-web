@@ -3,20 +3,6 @@ import {BASE16,BASE64,convert} from "./basecvt.js";
 
 export default class AppController{
     constructor(){
-        
-        /*
-        if(localStorage["history"]){
-            this.history = JSON.parse(localStorage["history"]);
-        }else{
-            this.history = [];
-        }
-
-        if(localStorage["allowances"]){
-            this.allowances = JSON.parse(localStorage["allowances"]);
-        }else{
-            this.allowances = [];
-        }
-        */
         window.alert = window.toastr.info;
         window.alert("Loading resources please wait...");
         this.history = new Worker("/xvault-web/assets/js/history-worker.js");
@@ -33,7 +19,6 @@ export default class AppController{
             let data = await (await fetch("/xvault-web/assets/js/web3-1.0.0-beta.37.min.js")).text();
             await eval(data);
             this.web3 = new Web3();
-            this.wss3 = new Web3();
             let promises = [];
             promises.push(this.fetchJSON("xtokenAddrs", "/xvault-web/assets/json/xtoken/xtoken.deployment.json"));
             promises.push(this.fetchJSON("xtokenABI","/xvault-web/assets/json/xtoken/xtoken.abi.json"));
@@ -159,19 +144,25 @@ export default class AppController{
             }
             return await this.postConnect(provider);
         }else{
-            let pin = prompt("You must set a PIN to continue, it must be between 10 and 16 digits long");
-            let pin2 = prompt("Please re-enter pin to confirm");
-            if(pin == pin2 && pin.length >=10 && pin.length <= 16 && !isNaN(pin)){
-                localStorage.clear();
-                try{
-                    await this.encryptMnemonic(bip39.generateMnemonic(256),pin);
-                    return await this.postConnect();
-                }catch(err){
-                    console.debug(err);
+            if(confirm("There is no account stored on this computer, press \"OK\" to create a new one or \"Cancel\" to import an existing account")){
+                let pin = prompt("You must set a PIN to continue, it must be between 10 and 16 digits long");
+                let pin2 = prompt("Please re-enter pin to confirm");
+                if(pin == pin2 && pin.length >=10 && pin.length <= 16 && !isNaN(pin)){
+                    localStorage.clear();
+                    try{
+                        await this.encryptMnemonic(bip39.generateMnemonic(256),pin);
+                        return await this.postConnect();
+                    }catch(err){
+                        console.debug(err);
+                    }
+                }else{
+                    window.alert("PIN Mismatch!  Please try again!");
+                    return await this.connectInternal();
                 }
             }else{
-                window.alert("PIN Mismatch!  Please try again!");
-                return await this.connectInternal();
+                setTimeout(()=>{window.location.hash = "settings-view";},500);
+                
+                return false;
             }
         }
         return false;
@@ -370,6 +361,9 @@ export default class AppController{
         return result;
     }
 
+    async randomMnemonic(){
+        return await bip39.generateMnemonic(256);
+    }
     async decryptMnemonic(pin){
         window.alert("Decrypting mnemonic");
         let mnText = crypto.decrypt(localStorage["mnemonic"],await crypto.pbkdf(pin));
