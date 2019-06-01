@@ -65,7 +65,7 @@ export default class SettingsViewElement extends TelepathicElement{
                 let pin1 = window.prompt("Please enter your PIN");
                 let pin2 = window.prompt("Please enter PIN for the second time");
                 if(pin1 == pin2){
-                    window.alert("This process can take some time, the screen will reset when the process is complete");
+                    window.alert("This process can take some time, the app will reset when the process is complete");
                     setTimeout(()=>{
                         window.app.encryptMnemonic(this.mnemonic,pin1).then(()=>{
                             setTimeout(()=>{
