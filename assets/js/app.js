@@ -379,6 +379,8 @@ export default class AppController{
     }
 
     async encryptMnemonic(mnemonic,pin){
+        document.querySelector("#main-menu").style.display = "none";
+        document.querySelector("#main").style.display = "none";
         return new Promise((resolve,reject)=>{
             localStorage.clear();
             window.alert("Encrypting mnemonic...");
@@ -400,6 +402,8 @@ export default class AppController{
                             wallet.save(await this.pbkdf(pin));
                             window.alert("Wallet saved succesfully!");
                             this.wallet = JSON.parse(localStorage["web3js_wallet"]);
+                            document.querySelector("#main-menu").style.display = "block";
+                            document.querySelector("#main").style.display = "block";
                             resolve();
                         },500);
                     },500);
