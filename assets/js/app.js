@@ -144,14 +144,21 @@ export default class AppController{
             }
             return await this.postConnect(provider);
         }else{
-            if(confirm("There is no account stored on this computer, press \"OK\" to create a new one or \"Cancel\" to import an existing account")){
+            if(confirm("There is no account stored on this computer, press \"OK\" to create a new one or \"Cancel\" to go to the settings menu to import an existing account")){
                 let pin = prompt("You must set a PIN to continue, it must be between 10 and 16 digits long");
                 let pin2 = prompt("Please re-enter pin to confirm");
                 if(pin == pin2 && pin.length >=10 && pin.length <= 16 && !isNaN(pin)){
                     localStorage.clear();
                     try{
                         await this.encryptMnemonic(bip39.generateMnemonic(256),pin);
-                        return await this.postConnect();
+                        window.alert("All done!  Standby while we reload the app!");
+                        setTimeout(()=>{
+                            window.location.hash = "";
+                            setTimeout(()=>{
+                                window.location.reload(true);
+                            },100);
+                        },1500);
+                        return true;
                     }catch(err){
                         console.debug(err);
                     }
@@ -372,29 +379,46 @@ export default class AppController{
     }
 
     async encryptMnemonic(mnemonic,pin){
-        localStorage.clear();
-        window.alert("Encrypting mnemonic...");
-        localStorage["mnemonic"] = crypto.encrypt(JSON.stringify(mnemonic),await crypto.pbkdf(pin));
-        console.debug("encrypted mnemonic: ",localStorage["mnemonic"]);
-        window.alert("Please write down the following words before continuing, you will need them later: "+mnemonic);
-        let seed = await (await bip39.mnemonicToSeed(mnemonic)).toString('hex');
-        let wallet = this.web3.eth.accounts.wallet.create(0);
-        await wallet.clear();
-        window.alert("Creating seed...");
-        let pke = await this.pbkdf(seed);
-        console.debug("pke: ",pke);
-        await wallet.add(pke);
-        window.alert("Creating wallet...");
-        console.debug("wallet: ",this.wallet);
-        wallet.save(await this.pbkdf(pin));
-        window.alert("Wallet saved succesfully!");
-        this.wallet = JSON.parse(localStorage["web3js_wallet"]);;
-
+        return new Promise((resolve,reject)=>{
+            localStorage.clear();
+            window.alert("Encrypting mnemonic...");
+            setTimeout(async ()=>{
+                localStorage["mnemonic"] = crypto.encrypt(JSON.stringify(mnemonic),await crypto.pbkdf(pin));
+                console.debug("encrypted mnemonic: ",localStorage["mnemonic"]);
+                setTimeout(async ()=>{
+                    let seed = await (await bip39.mnemonicToSeed(mnemonic)).toString('hex');
+                    let wallet = this.web3.eth.accounts.wallet.create(0);
+                    await wallet.clear();
+                    window.alert("Creating seed...");
+                    setTimeout(async ()=>{
+                        let pke = await this.pbkdf(seed);
+                        console.debug("pke: ",pke);
+                        await wallet.add(pke);
+                        window.alert("Creating wallet...");
+                        setTimeout(async ()=>{
+                            console.debug("wallet: ",this.wallet);
+                            wallet.save(await this.pbkdf(pin));
+                            window.alert("Wallet saved succesfully!");
+                            this.wallet = JSON.parse(localStorage["web3js_wallet"]);
+                            resolve();
+                        },500);
+                    },500);
+                },500);
+            },500);
+        });
+        
     }
 
     async pbkdf(p){
-        await window.alert("Calculating encryption key...");
-        return this.web3.utils.keccak256(this.web3.utils.bytesToHex(await crypto.pbkdf(""+p)));
+        return new Promise((resolve,reject)=>{
+            window.alert("Calculating new decryption key...");
+            setTimeout(()=>{
+                crypto.pbkdf(""+p).then((bytes)=>{
+                    let hex = this.web3.utils.bytesToHex(bytes);
+                    resolve(this.web3.utils.keccak256(hex));
+                });
+            },500);
+        });
     }
 
     fetchHistory(symbol){

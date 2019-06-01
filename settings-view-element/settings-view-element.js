@@ -29,6 +29,8 @@ export default class SettingsViewElement extends TelepathicElement{
             this.$.querySelector("#pin-area").style.display = "none";
             this.$.querySelector("#unlock-btn").style.display = "none";
             this.$.querySelector("#export-btn").style.display = "none";
+        }else{
+            this.$.querySelector('#mnemonic-area-div').style.display = "none";
         }
     }
 
@@ -36,6 +38,7 @@ export default class SettingsViewElement extends TelepathicElement{
         evt.preventDefault();
         this.mnemonic = await app.randomMnemonic();
     }
+
     async onResetEvent(evt){
         evt.preventDefault();
         if(window.confirm("Do you really want to erase your account and reset the app to it's default settings?")){
@@ -55,20 +58,24 @@ export default class SettingsViewElement extends TelepathicElement{
         evt.preventDefault();
         console.debug("lock-btn clicked!");
         if(this.mnemonic.length > 10 && this.mnemonic !== this.newmonic){
-            if(window.confirm("Do you want to clear all settings and use the new account?")){
+            if(window.confirm("Do you want to clear all settings and use the seed phrase to import a new account?")){
                 localStorage.clear();
                 await indexedDB.deleteDatabase("history");
                 await indexedDB.deleteDatabase("allowances");
                 let pin1 = window.prompt("Please enter your PIN");
                 let pin2 = window.prompt("Please enter PIN for the second time");
                 if(pin1 == pin2){
-                    await window.app.encryptMnemonic(this.mnemonic,pin1);
+                    window.alert("This process can take some time, the screen will reset when the process is complete");
                     setTimeout(()=>{
-                        window.location.hash = "";
-                        setTimeout(()=>{
-                            window.location.reload(true);
-                        },100);
-                    },500);
+                        window.app.encryptMnemonic(this.mnemonic,pin1).then(()=>{
+                            setTimeout(()=>{
+                                window.location.hash = "";
+                                setTimeout(()=>{
+                                    window.location.reload(true);
+                                },100);
+                            },500);
+                        })
+                    },1000);
                 }else{
                     this.onResetEvent(evt);
                 }
@@ -87,8 +94,13 @@ export default class SettingsViewElement extends TelepathicElement{
     
     async unlock(pin){
         await window.alert("Unlocking account, please wait...");
-        this.mnemonic = await window.app.decryptMnemonic(pin);
-        this.newmonic = this.mnemonic;
+        setTimeout(()=>{
+            window.app.decryptMnemonic(pin).then((seed)=>{
+                this.mnemonic = seed;
+                this.newmonic = this.mnemonic;
+                this.$.querySelector('#mnemonic-area-div').style.display = "block";
+            }).catch(window.alert);
+        },1000);
     }
 
     async exportWallet(evt){

@@ -6,14 +6,14 @@
             <input type="password" id="pinput">
             <button id="unlock-btn">UNLOCK</button>
         </div>
-        <div class="field">
-            <label for="mnemonic-area">Mnemonic or seed phrase</label>
+        <div class="field" id="mnemonic-area-div">
+            <label for="mnemonic-area">Seed phrase</label>
             <button id="generate-btn">Random</button>
             <textarea id="mnemonic-area" value="${mnemonic}" cols="30" rows="8" class="field"></textarea>
         </div>
         <div class="field">
             <button id="export-btn" width="100%" title="Backup an encrypted wallet file for safe keeping">EXPORT WALLET</button>
-            <button id="lock-btn" width="100%" title="Use mnemonic to generate an encrypted wallet">LOCK</button>
+            <button id="lock-btn" width="100%" title="Use seed phrase to generate an encrypted wallet">LOCK</button>
             <button id="reset-btn" width="100%" title="Erase all settings, use with caution.">FACTORY RESET</button>
         </div>
     </div>
